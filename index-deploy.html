@@ -5,758 +5,415 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard Pengurusan JKE PPD</title>
 <style>
-:root {
-  --bg: #f4f4f4;
-  --surface: #ffffff;
-  --sidebar-bg: #161616;
-  --sidebar-hover: #262626;
-  --sidebar-active-bg: #0f62fe1a;
-  --sidebar-active-text: #78a9ff;
-  --accent: #0f62fe;
-  --accent2: #0043ce;
-  --text: #161616;
-  --text-muted: #6f6f6f;
-  --border: #e0e0e0;
-  --success: #24a148;
-  --warning: #f1c21b;
-  --danger: #da1e28;
-  --info: #0072c3;
-  --purple: #8a3ffc;
-  --teal: #009d9a;
-  --header-h: 48px;
-  --sidebar-w: 260px;
-  --radius: 2px;
-  --shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.08);
-  --shadow-lg: 0 4px 16px rgba(0,0,0,.15);
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'IBM Plex Sans', -apple-system, 'Segoe UI', sans-serif;
-  background: var(--bg); color: var(--text);
-  font-size: 14px; line-height: 1.5; overflow: hidden;
-}
-#app { display: flex; height: 100vh; }
-.sidebar {
-  width: var(--sidebar-w); background: var(--sidebar-bg); color: #c6c6c6;
-  display: flex; flex-direction: column; flex-shrink: 0;
-  overflow-y: auto; transition: width 0.2s;
-}
-.main-area { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-.topbar {
-  height: var(--header-h); background: var(--surface);
-  border-bottom: 1px solid var(--border); display: flex;
-  align-items: center; padding: 0 20px; gap: 12px;
-  flex-shrink: 0; box-shadow: var(--shadow); z-index: 10;
-}
-.content { flex: 1; overflow-y: auto; padding: 24px; background: var(--bg); }
-.sidebar-logo { padding: 16px; border-bottom: 1px solid #3d3d3d; flex-shrink: 0; }
-.logo-emblem {
-  width: 36px; height: 36px; background: var(--accent);
-  border-radius: var(--radius); display: flex; align-items: center;
-  justify-content: center; font-size: 18px; margin-bottom: 8px;
-}
-.logo-title { font-size: 14px; font-weight: 600; color: #f4f4f4; }
-.logo-subtitle { font-size: 11px; color: #a8a8a8; line-height: 1.4; margin-top: 2px; }
-.logo-badge {
-  display: inline-block; margin-top: 8px;
-  background: #24a14822; color: #42be65;
-  border: 1px solid #42be6544;
-  font-size: 10px; font-weight: 700; padding: 2px 8px;
-  border-radius: 20px; letter-spacing: 0.05em;
-}
-.sidebar-nav { flex: 1; padding: 8px 0; }
-.nav-section { margin-bottom: 4px; }
-.nav-section-label {
-  font-size: 10px; color: #6f6f6f; text-transform: uppercase;
-  letter-spacing: 0.1em; padding: 12px 16px 4px; font-weight: 600;
-}
-.nav-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 16px; cursor: pointer; color: #c6c6c6;
-  font-size: 13px; border-left: 3px solid transparent;
-  transition: background 0.12s, color 0.12s; user-select: none;
-}
-.nav-item:hover { background: var(--sidebar-hover); color: #f4f4f4; }
-.nav-item.active {
-  background: var(--sidebar-active-bg);
-  color: var(--sidebar-active-text);
-  border-left-color: var(--sidebar-active-text);
-}
-.nav-item-icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
-.nav-item-label { flex: 1; }
-.nav-badge { background: var(--danger); color: #fff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 20px; }
-.sidebar-footer { padding: 12px 16px; border-top: 1px solid #3d3d3d; flex-shrink: 0; }
-.user-card { display: flex; align-items: center; gap: 10px; }
-.user-avatar-sm {
-  width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff;
-  display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0;
-}
-.user-name { font-size: 12px; color: #f4f4f4; font-weight: 600; }
-.user-role { font-size: 11px; color: #a8a8a8; }
-.topbar-title { font-size: 15px; font-weight: 600; flex: 1; }
-.topbar-date { font-size: 12px; color: var(--text-muted); }
-.btn-topbar {
-  border: 1px solid var(--border); background: var(--surface);
-  padding: 6px 14px; border-radius: var(--radius);
-  font-size: 12px; cursor: pointer; color: var(--text); transition: background 0.12s;
-}
-.btn-topbar:hover { background: var(--bg); }
-.btn-topbar.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-.btn-topbar.primary:hover { background: var(--accent2); }
-.page { display: none; animation: fadeIn 0.2s ease; }
-.page.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
-.page-header { margin-bottom: 24px; }
-.page-title { font-size: 20px; font-weight: 600; color: var(--text); }
-.page-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
-.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; margin-bottom: 20px; }
-.kpi-card {
-  background: var(--surface); border: 1px solid var(--border);
-  padding: 20px 20px 16px; border-radius: var(--radius);
-  box-shadow: var(--shadow); position: relative; overflow: hidden; cursor: default;
-  transition: box-shadow 0.15s, transform 0.15s;
-}
-.kpi-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-1px); }
-.kpi-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
-.kpi-blue::after  { background: var(--accent); }
-.kpi-green::after { background: var(--success); }
-.kpi-yellow::after{ background: var(--warning); }
-.kpi-red::after   { background: var(--danger); }
-.kpi-purple::after{ background: var(--purple); }
-.kpi-teal::after  { background: var(--teal); }
-.kpi-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
-.kpi-value { font-size: 34px; font-weight: 300; line-height: 1.1; }
-.kpi-sub  { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
-.kpi-trend { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 600; margin-top: 4px; }
-.trend-up   { color: var(--success); }
-.trend-down { color: var(--danger); }
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 16px; }
-.card-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-.card-title { font-size: 13px; font-weight: 600; }
-.card-body { padding: 20px; }
-.card-footer { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-.tbl-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; }
-thead th {
-  background: #f4f4f4; padding: 10px 14px; text-align: left;
-  font-size: 11px; font-weight: 600; text-transform: uppercase;
-  letter-spacing: 0.06em; color: var(--text-muted);
-  border-bottom: 2px solid var(--border); white-space: nowrap; position: sticky; top: 0;
-}
-tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; cursor: pointer; }
-tbody tr:hover { background: #f4f4f4; }
-tbody td { padding: 10px 14px; font-size: 13px; }
-.badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
-.b-blue   { background: #d0e2ff; color: #0043ce; }
-.b-green  { background: #defbe6; color: #0e6027; }
-.b-yellow { background: #fcf4d6; color: #6e4f00; }
-.b-red    { background: #fff1f1; color: #a2191f; }
-.b-purple { background: #e8daff; color: #491d8b; }
-.b-teal   { background: #d9fbfb; color: #005d5d; }
-.b-gray   { background: #e0e0e0; color: #525252; }
-.btn { padding: 8px 16px; border-radius: var(--radius); cursor: pointer; font-size: 13px; font-weight: 500; border: none; font-family: inherit; transition: background 0.12s; }
-.btn-primary   { background: var(--accent); color: #fff; }
-.btn-primary:hover { background: var(--accent2); }
-.btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
-.btn-secondary:hover { background: var(--bg); }
-.btn-danger    { background: var(--danger); color: #fff; }
-.btn-success   { background: var(--success); color: #fff; }
-.btn-sm        { padding: 4px 10px; font-size: 11px; }
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.form-group { display: flex; flex-direction: column; gap: 4px; }
-.form-label { font-size: 12px; font-weight: 600; color: var(--text); }
-.form-input, .form-select, .form-textarea {
-  padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius);
-  font-size: 13px; background: var(--surface); font-family: inherit; color: var(--text);
-  transition: border-color 0.1s, box-shadow 0.1s;
-}
-.form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px #0f62fe26; }
-.form-textarea { resize: vertical; min-height: 72px; }
-.search-bar { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
-.search-input {
-  flex: 1; min-width: 200px; padding: 8px 12px;
-  border: 1px solid var(--border); border-radius: var(--radius);
-  font-size: 13px; background: var(--surface); font-family: inherit;
-}
-.search-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px #0f62fe26; }
-.filter-select {
-  padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius);
-  font-size: 13px; background: var(--surface); cursor: pointer; font-family: inherit;
-}
-.filter-select:focus { outline: none; border-color: var(--accent); }
-.pagination { display: flex; align-items: center; gap: 4px; }
-.page-btn { padding: 5px 10px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; border-radius: var(--radius); font-size: 12px; transition: background 0.12s; }
-.page-btn:hover:not(:disabled) { background: var(--bg); }
-.page-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-.page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.page-info { font-size: 12px; color: var(--text-muted); }
-.tabs { display: flex; border-bottom: 2px solid var(--border); margin-bottom: 20px; overflow-x: auto; }
-.tab { padding: 10px 18px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.12s; white-space: nowrap; }
-.tab:hover { color: var(--text); }
-.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-.tab-pane { display: none; }
-.tab-pane.active { display: block; }
-.progress-track { background: #e0e0e0; border-radius: 20px; height: 8px; overflow: hidden; }
-.progress-fill { height: 100%; border-radius: 20px; transition: width 0.5s ease; }
-.bar-chart { display: flex; flex-direction: column; gap: 9px; }
-.bar-row { display: flex; align-items: center; gap: 10px; }
-.bar-label { width: 130px; font-size: 12px; color: var(--text-muted); text-align: right; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.bar-track { flex: 1; background: #e0e0e0; border-radius: 2px; height: 18px; overflow: hidden; }
-.bar-fill { height: 100%; border-radius: 2px; display: flex; align-items: center; padding-left: 6px; transition: width 0.6s ease; }
-.bar-val { width: 44px; font-size: 12px; font-weight: 600; text-align: right; flex-shrink: 0; }
-.donut-wrap { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
-.donut-legend { display: flex; flex-direction: column; gap: 7px; }
-.legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
-.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-.cal-header-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; margin-bottom: 6px; }
-.cal-day-label { text-align: center; font-size: 10px; color: var(--text-muted); font-weight: 600; padding: 4px 0; }
-.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
-.cal-cell { aspect-ratio: 1; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 11px; cursor: pointer; transition: transform 0.1s, opacity 0.1s; }
-.cal-cell:hover { transform: scale(1.1); opacity: 0.85; }
-.cal-hadir  { background: var(--accent); color: #fff; }
-.cal-cuti   { background: var(--warning); color: #161616; }
-.cal-mc     { background: var(--danger); color: #fff; }
-.cal-hujung { background: #e0e0e0; color: #a8a8a8; }
-.cal-legend { display: flex; gap: 14px; margin-top: 10px; flex-wrap: wrap; }
-.cal-leg { display: flex; align-items: center; gap: 5px; font-size: 11px; }
-.cal-leg-dot { width: 10px; height: 10px; border-radius: 2px; }
-.stat-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
-.stat-box { flex: 1; min-width: 90px; background: var(--surface); border: 1px solid var(--border); padding: 14px 12px; border-radius: var(--radius); text-align: center; box-shadow: var(--shadow); }
-.stat-val { font-size: 26px; font-weight: 300; line-height: 1.1; }
-.stat-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-.activity-list { display: flex; flex-direction: column; gap: 12px; }
-.activity-item { display: flex; gap: 10px; align-items: flex-start; }
-.activity-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
-.activity-text { font-size: 12px; line-height: 1.4; }
-.activity-time { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-.avatar { border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; flex-shrink: 0; }
-.av-32 { width: 32px; height: 32px; font-size: 12px; }
-.av-48 { width: 48px; height: 48px; font-size: 16px; }
-.av-64 { width: 64px; height: 64px; font-size: 22px; }
-.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(22,22,22,.6); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
-.modal-overlay.open { display: flex; }
-.modal { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto; animation: modalIn 0.18s ease; }
-.modal-sm { width: 440px; max-width: 95vw; }
-.modal-md { width: 580px; max-width: 95vw; }
-.modal-lg { width: 720px; max-width: 96vw; }
-@keyframes modalIn { from { opacity: 0; transform: scale(.97) translateY(8px); } to { opacity: 1; transform: none; } }
-.modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--surface); z-index: 1; }
-.modal-title { font-size: 15px; font-weight: 600; }
-.modal-close { background: none; border: none; font-size: 18px; cursor: pointer; color: var(--text-muted); padding: 2px 6px; border-radius: var(--radius); }
-.modal-close:hover { background: var(--bg); }
-.modal-body { padding: 20px; }
-.modal-footer { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; gap: 8px; justify-content: flex-end; position: sticky; bottom: 0; background: var(--surface); }
-.notif-item { display: flex; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
-.notif-item:hover { background: var(--bg); }
-.notif-item.unread { background: #edf5ff; }
-.notif-icon-wrap { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
-.notif-body { flex: 1; min-width: 0; }
-.notif-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
-.notif-desc { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.notif-time { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
-.divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
-.empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted); }
-.empty-icon { font-size: 48px; margin-bottom: 12px; }
-.empty-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-.quick-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-.text-muted { color: var(--text-muted); }
-.text-sm    { font-size: 12px; }
-.text-xs    { font-size: 11px; }
-.fw-600     { font-weight: 600; }
-.mt-4 { margin-top: 4px; }
-.mt-8 { margin-top: 8px; }
-.mb-0 { margin-bottom: 0 !important; }
-.flex-center { display: flex; align-items: center; gap: 8px; }
-.gap-4 { gap: 4px; }
-.gap-8 { gap: 8px; }
-code.chip { font-size: 11px; background: #f4f4f4; border: 1px solid #e0e0e0; padding: 2px 6px; border-radius: var(--radius); font-family: 'IBM Plex Mono', monospace; }
-@media (max-width: 900px) {
-  :root { --sidebar-w: 56px; }
-  .nav-item-label, .nav-section-label, .logo-subtitle, .logo-badge, .user-name, .user-role { display: none; }
-  .logo-title { display: none; }
-  .sidebar-logo { padding: 12px; }
-  .nav-item { justify-content: center; padding: 12px; }
-  .nav-item-icon { width: auto; }
-  .sidebar-footer { display: none; }
-}
-@media (max-width: 640px) {
-  .grid-2, .grid-3 { grid-template-columns: 1fr; }
-  .form-grid { grid-template-columns: 1fr; }
-  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-  .content { padding: 12px; }
-}
+:root{--bg:#f4f4f4;--surface:#fff;--sidebar-bg:#161616;--sidebar-hover:#262626;--sidebar-active-bg:#0f62fe1a;--sidebar-active-text:#78a9ff;--accent:#0f62fe;--accent2:#0043ce;--text:#161616;--text-muted:#6f6f6f;--border:#e0e0e0;--success:#24a148;--warning:#f1c21b;--danger:#da1e28;--purple:#8a3ffc;--teal:#009d9a;--sidebar-w:260px;--radius:2px;--shadow:0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.08);--shadow-lg:0 4px 16px rgba(0,0,0,.15)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans',-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;overflow:hidden}
+#app{display:flex;height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--sidebar-bg);color:#c6c6c6;display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.main-area{flex:1;display:flex;flex-direction:column;min-width:0}
+.topbar{height:48px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;box-shadow:var(--shadow);z-index:10}
+.content{flex:1;overflow-y:auto;padding:24px;background:var(--bg)}
+.sidebar-logo{padding:16px;border-bottom:1px solid #3d3d3d;flex-shrink:0}
+.logo-emblem{width:36px;height:36px;background:var(--accent);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:8px}
+.logo-title{font-size:14px;font-weight:600;color:#f4f4f4}
+.logo-subtitle{font-size:11px;color:#a8a8a8;line-height:1.4;margin-top:2px}
+.logo-badge{display:inline-block;margin-top:8px;background:#24a14822;color:#42be65;border:1px solid #42be6544;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.sidebar-nav{flex:1;padding:8px 0}
+.nav-section{margin-bottom:4px}
+.nav-section-label{font-size:10px;color:#6f6f6f;text-transform:uppercase;letter-spacing:.1em;padding:12px 16px 4px;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer;color:#c6c6c6;font-size:13px;border-left:3px solid transparent;transition:background .12s,color .12s;user-select:none}
+.nav-item:hover{background:var(--sidebar-hover);color:#f4f4f4}
+.nav-item.active{background:var(--sidebar-active-bg);color:var(--sidebar-active-text);border-left-color:var(--sidebar-active-text)}
+.nav-item-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.nav-item-label{flex:1}
+.nav-badge{background:var(--danger);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px}
+.sidebar-footer{padding:12px 16px;border-top:1px solid #3d3d3d;flex-shrink:0}
+.user-card{display:flex;align-items:center;gap:10px}
+.user-avatar-sm{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.user-name{font-size:12px;color:#f4f4f4;font-weight:600}
+.user-role{font-size:11px;color:#a8a8a8}
+.topbar-title{font-size:15px;font-weight:600;flex:1}
+.topbar-date{font-size:12px;color:var(--text-muted)}
+.btn-topbar{border:1px solid var(--border);background:var(--surface);padding:6px 14px;border-radius:var(--radius);font-size:12px;cursor:pointer;color:var(--text);transition:background .12s}
+.btn-topbar:hover{background:var(--bg)}
+.btn-topbar.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.page{display:none;animation:fadeIn .2s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.page-header{margin-bottom:24px}
+.page-title{font-size:20px;font-weight:600}
+.page-subtitle{font-size:13px;color:var(--text-muted);margin-top:3px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-bottom:20px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);padding:20px 20px 16px;border-radius:var(--radius);box-shadow:var(--shadow);position:relative;overflow:hidden;cursor:default;transition:box-shadow .15s,transform .15s}
+.kpi-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-1px)}
+.kpi-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi-blue::after{background:var(--accent)}.kpi-green::after{background:var(--success)}.kpi-yellow::after{background:var(--warning)}.kpi-red::after{background:var(--danger)}.kpi-purple::after{background:var(--purple)}.kpi-teal::after{background:var(--teal)}
+.kpi-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.kpi-value{font-size:34px;font-weight:300;line-height:1.1}
+.kpi-sub{font-size:11px;color:var(--text-muted);margin-top:6px}
+.kpi-trend{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;margin-top:4px}
+.trend-up{color:var(--success)}.trend-down{color:var(--danger)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px}
+.card-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:13px;font-weight:600}
+.card-body{padding:20px}
+.card-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{background:#f4f4f4;padding:10px 14px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;position:sticky;top:0}
+tbody tr{border-bottom:1px solid var(--border);transition:background .1s;cursor:pointer}
+tbody tr:hover{background:#f4f4f4}
+tbody td{padding:10px 14px;font-size:13px}
+.badge{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.b-blue{background:#d0e2ff;color:#0043ce}.b-green{background:#defbe6;color:#0e6027}.b-yellow{background:#fcf4d6;color:#6e4f00}.b-red{background:#fff1f1;color:#a2191f}.b-purple{background:#e8daff;color:#491d8b}.b-gray{background:#e0e0e0;color:#525252}
+.btn{padding:8px 16px;border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:500;border:none;font-family:inherit;transition:background .12s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent2)}
+.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{background:var(--bg)}
+.btn-danger{background:var(--danger);color:#fff}.btn-success{background:var(--success);color:#fff}.btn-sm{padding:4px 10px;font-size:11px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-label{font-size:12px;font-weight:600;color:var(--text)}
+.form-input,.form-select,.form-textarea{padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;background:var(--surface);font-family:inherit;color:var(--text)}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px #0f62fe26}
+.form-textarea{resize:vertical;min-height:72px}
+.search-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.search-input{flex:1;min-width:200px;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;background:var(--surface);font-family:inherit}
+.search-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px #0f62fe26}
+.filter-select{padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;background:var(--surface);cursor:pointer;font-family:inherit}
+.pagination{display:flex;align-items:center;gap:4px}
+.page-btn{padding:5px 10px;border:1px solid var(--border);background:var(--surface);cursor:pointer;border-radius:var(--radius);font-size:12px;transition:background .12s}
+.page-btn:hover:not(:disabled){background:var(--bg)}
+.page-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.page-btn:disabled{opacity:.4;cursor:not-allowed}
+.page-info{font-size:12px;color:var(--text-muted)}
+.tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:20px;overflow-x:auto}
+.tab{padding:10px 18px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text-muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .12s;white-space:nowrap}
+.tab:hover{color:var(--text)}.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-pane{display:none}.tab-pane.active{display:block}
+.progress-track{background:#e0e0e0;border-radius:20px;height:8px;overflow:hidden}
+.progress-fill{height:100%;border-radius:20px;transition:width .5s ease}
+.bar-chart{display:flex;flex-direction:column;gap:9px}
+.bar-row{display:flex;align-items:center;gap:10px}
+.bar-label{width:130px;font-size:12px;color:var(--text-muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-track{flex:1;background:#e0e0e0;border-radius:2px;height:18px;overflow:hidden}
+.bar-fill{height:100%;border-radius:2px;transition:width .6s ease}
+.bar-val{width:44px;font-size:12px;font-weight:600;text-align:right;flex-shrink:0}
+.donut-wrap{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.donut-legend{display:flex;flex-direction:column;gap:7px}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:12px}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.cal-header-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:6px}
+.cal-day-label{text-align:center;font-size:10px;color:var(--text-muted);font-weight:600;padding:4px 0}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-cell{aspect-ratio:1;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;transition:transform .1s}
+.cal-cell:hover{transform:scale(1.1)}
+.cal-hadir{background:var(--accent);color:#fff}.cal-cuti{background:var(--warning);color:#161616}.cal-mc{background:var(--danger);color:#fff}.cal-hujung{background:#e0e0e0;color:#a8a8a8}
+.cal-legend{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap}
+.cal-leg{display:flex;align-items:center;gap:5px;font-size:11px}
+.cal-leg-dot{width:10px;height:10px;border-radius:2px}
+.stat-row{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.stat-box{flex:1;min-width:90px;background:var(--surface);border:1px solid var(--border);padding:14px 12px;border-radius:var(--radius);text-align:center;box-shadow:var(--shadow)}
+.stat-val{font-size:26px;font-weight:300;line-height:1.1}
+.stat-label{font-size:11px;color:var(--text-muted);margin-top:4px}
+.activity-list{display:flex;flex-direction:column;gap:12px}
+.activity-item{display:flex;gap:10px;align-items:flex-start}
+.activity-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.activity-text{font-size:12px;line-height:1.4}
+.activity-time{font-size:11px;color:var(--text-muted);margin-top:2px}
+.avatar{border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:700;color:#fff;flex-shrink:0}
+.av-32{width:32px;height:32px;font-size:12px}.av-64{width:64px;height:64px;font-size:22px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(22,22,22,.6);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto;animation:modalIn .18s ease}
+.modal-sm{width:440px;max-width:95vw}.modal-md{width:580px;max-width:95vw}.modal-lg{width:720px;max-width:96vw}
+@keyframes modalIn{from{opacity:0;transform:scale(.97) translateY(8px)}to{opacity:1;transform:none}}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:1}
+.modal-title{font-size:15px;font-weight:600}
+.modal-close{background:none;border:none;font-size:18px;cursor:pointer;color:var(--text-muted);padding:2px 6px;border-radius:var(--radius)}
+.modal-body{padding:20px}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;position:sticky;bottom:0;background:var(--surface)}
+.notif-item{display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+.notif-item:hover{background:var(--bg)}.notif-item.unread{background:#edf5ff}
+.notif-icon-wrap{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.notif-body{flex:1;min-width:0}
+.notif-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.notif-desc{font-size:12px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.notif-time{font-size:11px;color:var(--text-muted);white-space:nowrap}
+.divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+.empty-state{text-align:center;padding:48px 24px;color:var(--text-muted)}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.empty-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:6px}
+.quick-actions{display:flex;gap:10px;flex-wrap:wrap}
+.text-muted{color:var(--text-muted)}.text-sm{font-size:12px}.text-xs{font-size:11px}.fw-600{font-weight:600}
+.mt-4{margin-top:4px}.mb-0{margin-bottom:0!important}
+.flex-center{display:flex;align-items:center;gap:8px}.gap-8{gap:8px}
+code.chip{font-size:11px;background:#f4f4f4;border:1px solid #e0e0e0;padding:2px 6px;border-radius:var(--radius);font-family:monospace}
+@media(max-width:900px){:root{--sidebar-w:56px}.nav-item-label,.nav-section-label,.logo-subtitle,.logo-badge,.user-name,.user-role,.logo-title{display:none}.sidebar-logo{padding:12px}.nav-item{justify-content:center;padding:12px}.sidebar-footer{display:none}}
+@media(max-width:640px){.grid-2,.grid-3,.form-grid{grid-template-columns:1fr}.kpi-grid{grid-template-columns:repeat(2,1fr)}.content{padding:12px}}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <script>
-/* ── data.js ─────────────────────────────────────────────── */
-const BAHAGIAN = ['DET','DEP','DTK','DEG','DEQ','Staf Sokongan'];
-const JAWATAN_MAP = {
-  'DET':           ['Pengarah','Timbalan Pengarah','Penolong Pengarah','Pegawai Tadbir Kanan','Pegawai Tadbir','Pembantu Tadbir'],
-  'DEP':           ['Jurutera Elektrik Kanan','Jurutera Elektrik','Jurutera Muda','Juruteknik Elektrik Kanan','Juruteknik Elektrik','Pembantu Teknik'],
-  'DTK':           ['Pegawai IT Kanan','Pegawai IT','Pembantu IT','Penganalisis Sistem','Jurutera Perisian'],
-  'DEG':           ['Pegawai Kewangan Kanan','Pegawai Kewangan','Pembantu Kewangan','Penolong Akauntan','Kerani Kewangan'],
-  'DEQ':           ['Penyelia Operasi','Juruteknik Kanan','Juruteknik','Pembantu Operasi','Penjaga Stor','Pemandu'],
-  'Staf Sokongan': ['Pegawai Latihan Kanan','Pegawai Latihan','Fasilitator','Koordinator Latihan','Pembantu Latihan','Pembantu Am']
+/* DATA */
+const BAHAGIAN=['DET','DEP','DTK','DEG','DEQ','Staf Sokongan'];
+const JWM={'DET':['Pengarah','Timbalan Pengarah','Penolong Pengarah','Pegawai Tadbir Kanan','Pegawai Tadbir','Pembantu Tadbir'],'DEP':['Jurutera Elektrik Kanan','Jurutera Elektrik','Jurutera Muda','Juruteknik Elektrik Kanan','Juruteknik Elektrik','Pembantu Teknik'],'DTK':['Pegawai IT Kanan','Pegawai IT','Pembantu IT','Penganalisis Sistem','Jurutera Perisian'],'DEG':['Pegawai Kewangan Kanan','Pegawai Kewangan','Pembantu Kewangan','Penolong Akauntan','Kerani Kewangan'],'DEQ':['Penyelia Operasi','Juruteknik Kanan','Juruteknik','Pembantu Operasi','Penjaga Stor','Pemandu'],'Staf Sokongan':['Pegawai Latihan Kanan','Pegawai Latihan','Fasilitator','Koordinator Latihan','Pembantu Latihan','Pembantu Am']};
+const GRM={'DET':['A44','A41','N29','N17'],'DEP':['C52','C48','C44','C41'],'DTK':['F41','F29','F22'],'DEG':['W48','W44','W22','W17'],'DEQ':['J41','J29','R11','H11'],'Staf Sokongan':['S41','S29','E41','N17']};
+const ND=['Ahmad','Muhammad','Nor','Siti','Mohd','Nurul','Azman','Faizal','Hairul','Zulkifli','Norazura','Halimah','Roslinda','Syafiqah','Khairul','Norzalina','Ismail','Hazrul','Amirul','Farhana','Rizal','Wan Ahmad','Nik','Aziz','Hafiza','Zalina','Safwan','Hafizuddin','Nurhafiza','Azrul','Rashidah','Muhamad Hafiz','Suzana','Irfan','Nadia','Badrul Hisyam','Rozita','Khairu Anwar','Saidatul','Harith'];
+const NB=['bin Abdullah','binti Hassan','bin Ibrahim','binti Ali','bin Yusof','binti Ahmad','bin Ismail','binti Ramli','bin Othman','binti Razak','bin Hamid','binti Jamil','bin Kassim','binti Zakaria','bin Ghani','binti Nordin','bin Talib','binti Sulaiman','bin Ariffin','binti Kamal','bin Idris','binti Mohd Noor','bin Bakar','binti Hashim','bin Rahim','binti Zainudin','bin Salleh','binti Mansor','bin Harun','binti Osman'];
+const AVC=['#0f62fe','#24a148','#8a3ffc','#009d9a','#ee5396','#0072c3','#fa4d56','#ff832b'];
+const STO=['Aktif','Aktif','Aktif','Aktif','Aktif','Aktif','Aktif','Cuti','Sakit'];
+function sr(s){const x=Math.sin(s+1)*10000;return x-Math.floor(x)}
+function sri(s,a,b){return Math.floor(sr(s)*(b-a+1))+a}
+const STAF=Array.from({length:97},(_,i)=>{
+  const bi=sri(i*7+1,0,5),bh=BAHAGIAN[bi],jw=JWM[bh][sri(i*3+2,0,JWM[bh].length-1)],gr=GRM[bh][sri(i*5+3,0,GRM[bh].length-1)];
+  const tl=sri(i*23+8,10,24),bl=String(sri(i*29+9,1,12)).padStart(2,'0'),hl=String(sri(i*31+10,1,28)).padStart(2,'0');
+  return{id:i+1,noPerkerja:'JKE'+String(i+1001).padStart(4,'0'),nama:ND[i%ND.length]+' '+NB[i%NB.length],jawatan:jw,bahagian:bh,gred:gr,status:STO[sri(i*11+4,0,8)],email:'staf'+(i+1)+'@jkeppd.gov.my',telefon:'01'+sri(i*19+7,1,9)+'-'+String(sri(i*41+11,1000000,9999999)),tarikh_lantikan:`20${tl}-${bl}-${hl}`,skor_lnpt:sri(i*13+5,61,98),kpi:sri(i*17+6,68,100),avatarColor:AVC[i%8],cuti_tahunan_baki:sri(i*37+11,2,20),cuti_tahunan_had:20,cuti_sakit_baki:sri(i*41+12,5,14),kompetensi:['A','B','B+','A-','A+'][sri(i*43+13,0,4)],jantina:sri(i*53+14,0,1)?'Lelaki':'Perempuan',negeri:['Selangor','Kuala Lumpur','Negeri Sembilan','Melaka','Johor'][sri(i*61+15,0,4)]};
+});
+const JC=['Cuti Tahunan','Cuti Sakit','Cuti Khas','Cuti Tanpa Gaji','Cuti Bersalin'];
+const SC=['Urusan peribadi','Rawatan perubatan','Majlis perkahwinan keluarga','Urusan perjalanan luar negara','Urusan anak-anak','Pemulihan selepas pembedahan'];
+const CUTI_DATA=Array.from({length:40},(_,i)=>{const sf=STAF[sri(i*7+1,0,96)],st=i<7?'Tertangguh':i<25?'Diluluskan':'Ditolak',bu=sri(i*11+2,1,6),h1=sri(i*13+3,1,22),hr=sri(i*3+6,1,8);return{id:i+1,staf:sf.nama,jenis:JC[sri(i*5,0,4)],mula:`2025-${String(bu).padStart(2,'0')}-${String(h1).padStart(2,'0')}`,tamat:`2025-${String(bu).padStart(2,'0')}-${String(h1+hr-1).padStart(2,'0')}`,hari:hr,sebab:SC[sri(i*7+7,0,5)],status:st};});
+const LATIHAN_DATA=[{prog:'Kursus Juruaudit Dalaman ISO 9001:2015',tarikh:'10-12 Feb 2025',peserta:15,status:'Selesai',pemberi:'SIRIM Berhad'},{prog:'Bengkel Kepimpinan Pertengahan',tarikh:'5-6 Mac 2025',peserta:20,status:'Selesai',pemberi:'INTAN'},{prog:'Latihan Keselamatan Siber & ICT',tarikh:'14-15 Apr 2025',peserta:25,status:'Selesai',pemberi:'CyberSecurity Malaysia'},{prog:'Kursus Pengurusan Kewangan Awam',tarikh:'8 Mei 2025',peserta:12,status:'Selesai',pemberi:'Jabatan Akauntan Negara'},{prog:'Program Integriti & Tadbir Urus',tarikh:'22-23 Mei 2025',peserta:30,status:'Selesai',pemberi:'SPRM'},{prog:'Kursus AutoCAD Lanjutan 2D/3D',tarikh:'12-13 Jun 2025',peserta:18,status:'Akan Datang',pemberi:'MIM'},{prog:'Microsoft Power BI untuk Pengurusan',tarikh:'18-19 Jun 2025',peserta:15,status:'Akan Datang',pemberi:'Microsoft Malaysia'},{prog:'Seminar Kejuruteraan Hijau & Mampan',tarikh:'3 Jul 2025',peserta:23,status:'Akan Datang',pemberi:'CIGRE Malaysia'},{prog:'Kursus Pengurusan Projek Bersepadu',tarikh:'21-23 Jul 2025',peserta:20,status:'Dirancang',pemberi:'PMI Malaysia'},{prog:'Bengkel Komunikasi Berkesan',tarikh:'5 Ogos 2025',peserta:35,status:'Dirancang',pemberi:'ILKAP'}];
+const LOG_LAPORAN=[{nama:'Laporan Kehadiran Mei 2025',jenis:'PDF',tarikh:'01 Jun 2025',oleh:'Prof. Ahmad Razak',saiz:'2.3 MB'},{nama:'Laporan Cuti Tahunan 2024',jenis:'PDF',tarikh:'15 Jan 2025',oleh:'Prof. Ahmad Razak',saiz:'1.8 MB'},{nama:'Laporan LNPT 2023',jenis:'PDF',tarikh:'30 Dis 2024',oleh:'Pn. Siti binti Ali',saiz:'3.1 MB'},{nama:'Senarai Staf Aktif Jun 2025',jenis:'Excel',tarikh:'05 Jun 2025',oleh:'En. Mohd bin Ibrahim',saiz:'0.9 MB'},{nama:'Laporan Kehadiran Apr 2025',jenis:'PDF',tarikh:'02 Mei 2025',oleh:'Prof. Ahmad Razak',saiz:'2.1 MB'},{nama:'Statistik KPI Suku 1 2025',jenis:'PDF',tarikh:'01 Apr 2025',oleh:'Pn. Norazura binti Hamid',saiz:'1.5 MB'},{nama:'Laporan Latihan Q1 2025',jenis:'Excel',tarikh:'05 Apr 2025',oleh:'En. Faizal bin Othman',saiz:'0.7 MB'}];
+const KHI=STAF.slice(0,30).map(s=>{const j=sri(s.id*11+7,7,9),m=sri(s.id*13+8,0,59),lb=j>8||(j===8&&m>15);return{...s,masuk:`${j}:${String(m).padStart(2,'0')}`,keluar:`${j+8}:${String((m+30)%60).padStart(2,'0')}`,lambat:lb};});
+const NOTIF=[{icon:'🌴',title:'Permohonan Cuti Baru',desc:'Siti binti Hassan memohon cuti 3 hari',time:'10 min lalu',unread:true,bg:'#fef3c7'},{icon:'⚠️',title:'Staf AWOL Dikesan',desc:'Mohd bin Yusof tidak hadir tanpa makluman',time:'1 jam lalu',unread:true,bg:'#fee2e2'},{icon:'📋',title:'LNPT Perlu Dikemaskini',desc:'6 staf belum lengkap penilaian LNPT 2024',time:'3 jam lalu',unread:true,bg:'#ede9fe'},{icon:'🎓',title:'Program Latihan Akan Datang',desc:'Kursus AutoCAD Lanjutan 12-13 Jun 2025',time:'Semalam',unread:false,bg:'#d1fae5'},{icon:'📊',title:'Laporan Bulanan Sedia',desc:'Laporan Kehadiran Mei 2025 telah dijana',time:'2 hari lalu',unread:false,bg:'#dbeafe'}];
+
+/* CHARTS */
+function rBC(id,items,max){max=max||100;const el=document.getElementById(id);if(!el)return;el.innerHTML=items.map(it=>{const p=Math.round((it.value/max)*100),c=it.color||'var(--accent)';return`<div class="bar-row"><div class="bar-label" title="${it.label}">${it.label}</div><div class="bar-track"><div class="bar-fill" style="width:${p}%;background:${c}"></div></div><div class="bar-val" style="color:${c}">${it.value}${it.unit||''}</div></div>`;}).join('');}
+function rCC(id,labels,vals,hi){const el=document.getElementById(id);if(!el)return;const mx=Math.max(...vals);el.innerHTML=`<div style="display:flex;align-items:flex-end;gap:6px;height:140px;padding:0 4px">${labels.map((lb,i)=>{const p=(vals[i]/mx)*100,isHl=i===(hi!==undefined?hi:labels.length-1);return`<div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:3px"><div style="font-size:10px;font-weight:${isHl?700:400};color:${isHl?'var(--accent)':'var(--text-muted)'}">${vals[i]}%</div><div style="width:100%;background:${isHl?'var(--accent)':'#0f62fe55'};border-radius:2px 2px 0 0;height:${p*1.1}px;min-height:4px"></div><div style="font-size:10px;color:${isHl?'var(--accent)':'var(--text-muted)'};font-weight:${isHl?700:400}">${lb}</div></div>`;}).join('')}</div>`;}
+function rDN(svgId,legId,segs){const cx=70,cy=70,R=55,r=32,tot=segs.reduce((s,x)=>s+x.value,0);let ang=-Math.PI/2,paths='';segs.forEach(sg=>{const sw=(sg.value/tot)*Math.PI*2,x1=cx+R*Math.cos(ang),y1=cy+R*Math.sin(ang),x2=cx+R*Math.cos(ang+sw),y2=cy+R*Math.sin(ang+sw),xi1=cx+r*Math.cos(ang+sw),yi1=cy+r*Math.sin(ang+sw),xi2=cx+r*Math.cos(ang),yi2=cy+r*Math.sin(ang),lg=sw>Math.PI?1:0;paths+=`<path d="M${x1.toFixed(2)},${y1.toFixed(2)} A${R},${R} 0 ${lg},1 ${x2.toFixed(2)},${y2.toFixed(2)} L${xi1.toFixed(2)},${yi1.toFixed(2)} A${r},${r} 0 ${lg},0 ${xi2.toFixed(2)},${yi2.toFixed(2)} Z" fill="${sg.color}" stroke="#fff" stroke-width="2"/>`;ang+=sw;});const sv=document.getElementById(svgId);if(sv)sv.innerHTML=paths+`<text x="${cx}" y="${cy-5}" text-anchor="middle" font-size="16" font-weight="600" fill="#161616">${tot}</text><text x="${cx}" y="${cy+11}" text-anchor="middle" font-size="10" fill="#6f6f6f">Staf</text>`;const le=document.getElementById(legId);if(le)le.innerHTML=segs.map(s=>`<div class="legend-item"><div class="legend-dot" style="background:${s.color}"></div><span>${s.label}: <strong>${s.value}</strong></span></div>`).join('');}
+
+/* STAF MODULE */
+(function(){
+let cp=1;const PP=15;let fl=[];
+function gi(n){return n.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();}
+function sb(s){const c=s==='Aktif'?'b-green':s==='Cuti'?'b-yellow':'b-red';return`<span class="badge ${c}">${s}</span>`;}
+function rt(){
+  const st=(cp-1)*PP,sl=fl.slice(st,st+PP),tb=document.getElementById('staf-tbody');if(!tb)return;
+  if(!sl.length){tb.innerHTML=`<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">Tiada rekod ditemui</div></div></td></tr>`;return;}
+  tb.innerHTML=sl.map((s,i)=>`<tr onclick="SM.showDetail(${s.id-1})"><td>${st+i+1}</td><td><div class="flex-center"><div class="avatar av-32" style="background:${s.avatarColor}">${gi(s.nama)}</div><div><div class="fw-600">${s.nama}</div><div class="text-xs text-muted">${s.email}</div></div></div></td><td><code class="chip">${s.noPerkerja}</code></td><td class="text-sm">${s.jawatan}</td><td><span class="badge b-blue" style="font-size:10px">${s.bahagian}</span></td><td><span class="badge b-gray">${s.gred}</span></td><td>${sb(s.status)}</td><td><button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();SM.showDetail(${s.id-1})">👁 Lihat</button></td></tr>`).join('');
+  const ci=document.getElementById('staf-count');if(ci)ci.textContent=fl.length;
+  const pi=document.getElementById('staf-page-info');if(pi)pi.textContent=`Menunjukkan ${st+1}-${Math.min(st+PP,fl.length)} daripada ${fl.length} rekod`;
+  rp();
+}
+function rp(){
+  const tot=Math.ceil(fl.length/PP),co=document.getElementById('staf-pagination');if(!co)return;
+  let h=`<button class="page-btn" onclick="SM.goPage(${cp-1})" ${cp===1?'disabled':''}>&#8249; Sebelum</button>`;
+  for(let p=1;p<=tot;p++){if(p===1||p===tot||Math.abs(p-cp)<=1)h+=`<button class="page-btn ${p===cp?'active':''}" onclick="SM.goPage(${p})">${p}</button>`;else if(Math.abs(p-cp)===2)h+=`<span style="padding:0 4px;color:var(--text-muted)">...</span>`;}
+  h+=`<button class="page-btn" onclick="SM.goPage(${cp+1})" ${cp===Math.ceil(fl.length/PP)?'disabled':''}> Seterus &#8250;</button>`;
+  co.innerHTML=h;
+}
+window.SM={
+  init(){fl=[...STAF];cp=1;rt();this.pcs();},
+  filter(){
+    const q=(document.getElementById('staf-search')?.value||'').toLowerCase(),b=document.getElementById('staf-filter-bahagian')?.value||'',g=document.getElementById('staf-filter-gred')?.value||'',st=document.getElementById('staf-filter-status')?.value||'';
+    fl=STAF.filter(x=>(!q||x.nama.toLowerCase().includes(q)||x.noPerkerja.toLowerCase().includes(q)||x.jawatan.toLowerCase().includes(q))&&(!b||x.bahagian===b)&&(!g||x.gred===g)&&(!st||x.status===st));
+    cp=1;rt();
+  },
+  goPage(p){const t=Math.ceil(fl.length/PP);if(p<1||p>t)return;cp=p;rt();},
+  showDetail(idx){
+    const s=STAF[idx];if(!s)return;
+    const gl=s.skor_lnpt>=90?'Cemerlang':s.skor_lnpt>=80?'Baik':s.skor_lnpt>=70?'Memuaskan':'Perlu Peningkatan';
+    const gc=s.skor_lnpt>=90?'b-green':s.skor_lnpt>=80?'b-blue':s.skor_lnpt>=70?'b-yellow':'b-red';
+    const sbx=sx=>{const c=sx==='Aktif'?'b-green':sx==='Cuti'?'b-yellow':'b-red';return`<span class="badge ${c}">${sx}</span>`;};
+    document.getElementById('modal-staf-body').innerHTML=`<div class="flex-center" style="gap:16px;margin-bottom:20px"><div class="avatar av-64" style="background:${s.avatarColor}">${gi(s.nama)}</div><div><div style="font-size:18px;font-weight:600">${s.nama}</div><div class="text-muted">${s.jawatan}</div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge b-blue">${s.bahagian}</span><span class="badge b-gray">${s.gred}</span>${sbx(s.status)}</div></div></div><hr class="divider"><div class="form-grid" style="gap:12px"><div><div class="form-label">No. Pekerja</div><code class="chip" style="margin-top:4px;display:inline-block">${s.noPerkerja}</code></div><div><div class="form-label">E-mel</div><div style="margin-top:4px">${s.email}</div></div><div><div class="form-label">No. Telefon</div><div style="margin-top:4px">${s.telefon}</div></div><div><div class="form-label">Jantina</div><div style="margin-top:4px">${s.jantina}</div></div><div><div class="form-label">Negeri</div><div style="margin-top:4px">${s.negeri}</div></div><div><div class="form-label">Tarikh Lantikan</div><div style="margin-top:4px">${s.tarikh_lantikan}</div></div></div><hr class="divider"><div style="font-weight:600;margin-bottom:12px">Prestasi & Cuti</div><div class="form-grid" style="gap:12px"><div><div class="form-label">Skor LNPT 2024</div><div style="display:flex;align-items:center;gap:8px;margin-top:6px"><span style="font-size:26px;font-weight:300">${s.skor_lnpt}</span><span class="text-muted">/100</span><span class="badge ${gc}">${gl}</span></div><div class="progress-track" style="margin-top:6px"><div class="progress-fill" style="width:${s.skor_lnpt}%;background:${s.skor_lnpt>=80?'var(--success)':'var(--warning)'}"></div></div></div><div><div class="form-label">KPI Semasa</div><div style="font-size:26px;font-weight:300;margin-top:6px">${s.kpi}%</div><div class="progress-track" style="margin-top:6px"><div class="progress-fill" style="width:${s.kpi}%;background:var(--success)"></div></div></div><div><div class="form-label">Baki Cuti Tahunan</div><div style="font-size:18px;font-weight:500;margin-top:4px">${s.cuti_tahunan_baki} / ${s.cuti_tahunan_had} hari</div></div><div><div class="form-label">Baki Cuti Sakit</div><div style="font-size:18px;font-weight:500;margin-top:4px">${s.cuti_sakit_baki} hari</div></div></div>`;
+    App.openModal('modal-staf');
+  },
+  pcs(){const sl=document.getElementById('cuti-staf-select');if(!sl)return;sl.innerHTML='<option value="">- Pilih Staf -</option>'+STAF.map(s=>`<option value="${s.id}">${s.nama} (${s.noPerkerja})</option>`).join('');},
+  exp(){alert('Eksport Excel dimulakan.');}
 };
-const GRED_MAP = {
-  'DET':           ['A44','A41','N29','N17'],
-  'DEP':           ['C52','C48','C44','C41'],
-  'DTK':           ['F41','F29','F22'],
-  'DEG':           ['W48','W44','W22','W17'],
-  'DEQ':           ['J41','J29','R11','H11'],
-  'Staf Sokongan': ['S41','S29','E41','N17']
+})();
+
+/* KEHADIRAN */
+(function(){
+window.KM={init(){
+  const hd=document.getElementById('cal-header'),gr=document.getElementById('cal-grid');
+  if(hd)hd.innerHTML=['Ahd','Isn','Sel','Rab','Kha','Jum','Sab'].map(h=>`<div class="cal-day-label">${h}</div>`).join('');
+  if(gr){let c='';for(let i=0;i<30;i++){const d=i+1,dw=i%7,iw=(dw===0||dw===6);if(iw){c+=`<div class="cal-cell cal-hujung">${d}</div>`;}else{const r=sri(d*7+3,0,9),cl=r<7?'cal-hadir':r<9?'cal-cuti':'cal-mc';c+=`<div class="cal-cell ${cl}">${d}</div>`;}}gr.innerHTML=c;}
+  const tb=document.getElementById('hadir-tbody');if(tb)tb.innerHTML=KHI.map(s=>`<tr><td><div class="flex-center gap-8"><div class="avatar av-32" style="background:${s.avatarColor}">${s.nama.split(' ').slice(0,2).map(w=>w[0]).join('')}</div><span>${s.nama}</span></div></td><td><span style="color:${s.lambat?'var(--danger)':'var(--success)'};font-weight:600">${s.masuk}</span></td><td>${s.keluar}</td><td><span class="badge ${s.lambat?'b-red':'b-green'}">${s.lambat?'Lewat':'Tepat Masa'}</span></td></tr>`).join('');
+  rCC('trend-chart',['Jan','Feb','Mac','Apr','Mei','Jun','Jul','Ogos','Sep','Okt','Nov','Dis'],[88,90,87,92,91,93,89,94,91,90,88,91],5);
+  rBC('ketidakhadiran-chart',[{label:'Cuti Diluluskan',value:4,color:'var(--warning)'},{label:'MC Disahkan',value:3,color:'var(--danger)'},{label:'AWOL',value:1,color:'var(--purple)'}],10);
+}};
+})();
+
+/* CUTI */
+(function(){
+function sb2(s){const c=s==='Diluluskan'?'b-green':s==='Tertangguh'?'b-yellow':'b-red';return`<span class="badge ${c}">${s}</span>`;}
+function rT(){const d=CUTI_DATA.filter(c=>c.status==='Tertangguh'),tb=document.getElementById('cuti-tertangguh-tbody');if(!tb)return;tb.innerHTML=d.map(c=>`<tr><td class="fw-600">${c.staf}</td><td><span class="badge b-blue">${c.jenis}</span></td><td>${c.mula}</td><td>${c.tamat}</td><td style="text-align:center;font-weight:600">${c.hari}</td><td class="text-sm text-muted">${c.sebab}</td><td><button class="btn btn-success btn-sm" onclick="CM.lulus(${c.id})">Lulus</button> <button class="btn btn-danger btn-sm" onclick="CM.tolak(${c.id})">Tolak</button></td></tr>`).join('');}
+window.CM={
+  init(){
+    rT();
+    const ts=document.getElementById('cuti-semua-tbody');if(ts)ts.innerHTML=CUTI_DATA.map((c,i)=>`<tr><td>${i+1}</td><td class="fw-600">${c.staf}</td><td><span class="badge b-blue">${c.jenis}</span></td><td>${c.mula}</td><td>${c.tamat}</td><td>${c.hari} hari</td><td>${sb2(c.status)}</td></tr>`).join('');
+    const tb=document.getElementById('baki-tbody');if(tb)tb.innerHTML=STAF.slice(0,35).map(s=>{const u=s.cuti_tahunan_had-s.cuti_tahunan_baki,p=Math.round((u/s.cuti_tahunan_had)*100),bc=p>80?'var(--danger)':p>60?'var(--warning)':'var(--accent)';return`<tr><td class="fw-600">${s.nama}</td><td><div class="flex-center"><strong>${s.cuti_tahunan_baki}</strong><span class="text-muted"> / ${s.cuti_tahunan_had}</span><div class="progress-track" style="width:70px;margin-left:8px"><div class="progress-fill" style="width:${p}%;background:${bc}"></div></div></div></td><td>${s.cuti_sakit_baki} hari</td><td>${sri(s.id*7+3,0,1)?'3 hari':'-'}</td><td>-</td></tr>`;}).join('');
+  },
+  filterBaki(){const q=(document.getElementById('baki-search')?.value||'').toLowerCase(),tb=document.getElementById('baki-tbody');if(!tb)return;const sm=q?STAF.filter(s=>s.nama.toLowerCase().includes(q)).slice(0,35):STAF.slice(0,35);tb.innerHTML=sm.map(s=>`<tr><td class="fw-600">${s.nama}</td><td><strong>${s.cuti_tahunan_baki}</strong> / ${s.cuti_tahunan_had}</td><td>${s.cuti_sakit_baki} hari</td><td>-</td><td>-</td></tr>`).join('');},
+  lulus(id){const c=CUTI_DATA.find(x=>x.id===id);if(c){c.status='Diluluskan';alert('Cuti '+c.staf+' DILULUSKAN.');rT();document.getElementById('cuti-badge').textContent=CUTI_DATA.filter(x=>x.status==='Tertangguh').length;}},
+  tolak(id){const c=CUTI_DATA.find(x=>x.id===id);if(c){c.status='Ditolak';alert('Cuti '+c.staf+' DITOLAK.');rT();document.getElementById('cuti-badge').textContent=CUTI_DATA.filter(x=>x.status==='Tertangguh').length;}}
 };
-const NAMA_DEPAN = ['Ahmad','Muhammad','Nor','Siti','Mohd','Nurul','Azman','Faizal','Hairul','Zulkifli','Norazura','Halimah','Roslinda','Syafiqah','Khairul','Norzalina','Ismail','Hazrul','Amirul','Farhana','Rizal','Wan Ahmad','Nik','Aziz','Hafiza','Zalina','Safwan','Hafizuddin','Nurhafiza','Azrul','Rashidah','Muhamad Hafiz','Suzana','Irfan','Nadia','Badrul Hisyam','Rozita','Khairu Anwar','Saidatul','Harith'];
-const NAMA_BELAKANG = ['bin Abdullah','binti Hassan','bin Ibrahim','binti Ali','bin Yusof','binti Ahmad','bin Ismail','binti Ramli','bin Othman','binti Razak','bin Hamid','binti Jamil','bin Kassim','binti Zakaria','bin Ghani','binti Nordin','bin Talib','binti Sulaiman','bin Ariffin','binti Kamal','bin Idris','binti Mohd Noor','bin Bakar','binti Hashim','bin Rahim','binti Zainudin','bin Salleh','binti Mansor','bin Harun','binti Osman'];
-const AVATAR_COLORS = ['#0f62fe','#24a148','#8a3ffc','#009d9a','#ee5396','#0072c3','#fa4d56','#ff832b'];
-const STATUS_OPTIONS = ['Aktif','Aktif','Aktif','Aktif','Aktif','Aktif','Aktif','Cuti','Sakit'];
-function sr(seed) { const x = Math.sin(seed + 1) * 10000; return x - Math.floor(x); }
-function sri(seed, min, max) { return Math.floor(sr(seed) * (max - min + 1)) + min; }
-function genNama(i) { return NAMA_DEPAN[i % NAMA_DEPAN.length] + ' ' + NAMA_BELAKANG[i % NAMA_BELAKANG.length]; }
-const STAF = Array.from({ length: 97 }, (_, i) => {
-  const bIdx = sri(i*7+1,0,BAHAGIAN.length-1), bahagian = BAHAGIAN[bIdx];
-  const jawatan = JAWATAN_MAP[bahagian][sri(i*3+2,0,JAWATAN_MAP[bahagian].length-1)];
-  const gred    = GRED_MAP[bahagian][sri(i*5+3,0,GRED_MAP[bahagian].length-1)];
-  const status  = STATUS_OPTIONS[sri(i*11+4,0,STATUS_OPTIONS.length-1)];
-  const tahunLan= sri(i*23+8,10,24), bulanLan=String(sri(i*29+9,1,12)).padStart(2,'0'), hariLan=String(sri(i*31+10,1,28)).padStart(2,'0');
-  return { id:i+1, noPerkerja:'JKE'+String(i+1001).padStart(4,'0'), nama:genNama(i), jawatan, bahagian, gred, status,
-    email:'staf'+(i+1)+'@jkeppd.gov.my', telefon:'01'+sri(i*19+7,1,9)+'-'+String(sri(i*41+11,1000000,9999999)),
-    tarikh_lantikan:`20${tahunLan}-${bulanLan}-${hariLan}`, skor_lnpt:sri(i*13+5,61,98), kpi:sri(i*17+6,68,100),
-    avatarColor:AVATAR_COLORS[i%AVATAR_COLORS.length], cuti_tahunan_baki:sri(i*37+11,2,20), cuti_tahunan_had:20,
-    cuti_sakit_baki:sri(i*41+12,5,14), kompetensi:['A','B','B+','A-','A+'][sri(i*43+13,0,4)],
-    jantina:sri(i*53+14,0,1)?'Lelaki':'Perempuan', negeri:['Selangor','Kuala Lumpur','Negeri Sembilan','Melaka','Johor'][sri(i*61+15,0,4)] };
-});
-const JENIS_CUTI = ['Cuti Tahunan','Cuti Sakit','Cuti Khas','Cuti Tanpa Gaji','Cuti Bersalin'];
-const SEBAB_CUTI = ['Urusan peribadi','Rawatan perubatan','Majlis perkahwinan keluarga','Urusan perjalanan luar negara','Urusan anak-anak','Pemulihan selepas pembedahan'];
-const CUTI_DATA = Array.from({ length: 40 }, (_, i) => {
-  const staf = STAF[sri(i*7+1,0,96)], status = i<7?'Tertangguh':i<25?'Diluluskan':'Ditolak';
-  const bulan=sri(i*11+2,1,6), hari1=sri(i*13+3,1,22), hari=sri(i*3+6,1,8);
-  return { id:i+1, staf:staf.nama, noPerkerja:staf.noPerkerja, jenis:JENIS_CUTI[sri(i*5,0,4)],
-    mula:`2025-${String(bulan).padStart(2,'0')}-${String(hari1).padStart(2,'0')}`,
-    tamat:`2025-${String(bulan).padStart(2,'0')}-${String(hari1+hari-1).padStart(2,'0')}`,
-    hari, sebab:SEBAB_CUTI[sri(i*7+7,0,5)], status };
-});
-const LATIHAN_DATA = [
-  {prog:'Kursus Juruaudit Dalaman ISO 9001:2015',tarikh:'10–12 Feb 2025',peserta:15,status:'Selesai',pemberi:'SIRIM Berhad'},
-  {prog:'Bengkel Kepimpinan Pertengahan',tarikh:'5–6 Mac 2025',peserta:20,status:'Selesai',pemberi:'INTAN'},
-  {prog:'Latihan Keselamatan Siber & ICT',tarikh:'14–15 Apr 2025',peserta:25,status:'Selesai',pemberi:'CyberSecurity Malaysia'},
-  {prog:'Kursus Pengurusan Kewangan Awam',tarikh:'8 Mei 2025',peserta:12,status:'Selesai',pemberi:'Jabatan Akauntan Negara'},
-  {prog:'Program Integriti & Tadbir Urus',tarikh:'22–23 Mei 2025',peserta:30,status:'Selesai',pemberi:'SPRM'},
-  {prog:'Kursus AutoCAD Lanjutan 2D/3D',tarikh:'12–13 Jun 2025',peserta:18,status:'Akan Datang',pemberi:'MIM'},
-  {prog:'Microsoft Power BI untuk Pengurusan',tarikh:'18–19 Jun 2025',peserta:15,status:'Akan Datang',pemberi:'Microsoft Malaysia'},
-  {prog:'Seminar Kejuruteraan Hijau & Mampan',tarikh:'3 Jul 2025',peserta:23,status:'Akan Datang',pemberi:'CIGRE Malaysia'},
-  {prog:'Kursus Pengurusan Projek Bersepadu',tarikh:'21–23 Jul 2025',peserta:20,status:'Dirancang',pemberi:'PMI Malaysia'},
-  {prog:'Bengkel Komunikasi Berkesan',tarikh:'5 Ogos 2025',peserta:35,status:'Dirancang',pemberi:'ILKAP'},
-];
-const LOG_LAPORAN = [
-  {nama:'Laporan Kehadiran Mei 2025',jenis:'PDF',tarikh:'01 Jun 2025',oleh:'Prof. Ahmad Razak',saiz:'2.3 MB'},
-  {nama:'Laporan Cuti Tahunan 2024',jenis:'PDF',tarikh:'15 Jan 2025',oleh:'Prof. Ahmad Razak',saiz:'1.8 MB'},
-  {nama:'Laporan LNPT 2023',jenis:'PDF',tarikh:'30 Dis 2024',oleh:'Pn. Siti binti Ali',saiz:'3.1 MB'},
-  {nama:'Senarai Staf Aktif Jun 2025',jenis:'Excel',tarikh:'05 Jun 2025',oleh:'En. Mohd bin Ibrahim',saiz:'0.9 MB'},
-  {nama:'Laporan Kehadiran Apr 2025',jenis:'PDF',tarikh:'02 Mei 2025',oleh:'Prof. Ahmad Razak',saiz:'2.1 MB'},
-  {nama:'Statistik KPI Suku 1 2025',jenis:'PDF',tarikh:'01 Apr 2025',oleh:'Pn. Norazura binti Hamid',saiz:'1.5 MB'},
-  {nama:'Laporan Latihan Q1 2025',jenis:'Excel',tarikh:'05 Apr 2025',oleh:'En. Faizal bin Othman',saiz:'0.7 MB'},
-];
-const KEHADIRAN_HARI_INI = STAF.slice(0,30).map(s => {
-  const jam=sri(s.id*11+7,7,9), min=sri(s.id*13+8,0,59), lambat=jam>8||(jam===8&&min>15);
-  return {...s, masuk:`${jam}:${String(min).padStart(2,'0')}`, keluar:`${jam+8}:${String((min+30)%60).padStart(2,'0')}`, lambat};
-});
-const NOTIFIKASI = [
-  {icon:'🌴',title:'Permohonan Cuti Baru',desc:'Siti binti Hassan memohon cuti 3 hari (10–12 Jun)',time:'10 min lalu',unread:true,bg:'#fef3c7'},
-  {icon:'⚠️',title:'Staf AWOL Dikesan',desc:'Mohd bin Yusof tidak hadir tanpa makluman',time:'1 jam lalu',unread:true,bg:'#fee2e2'},
-  {icon:'📋',title:'LNPT Perlu Dikemaskini',desc:'6 staf belum lengkap penilaian LNPT 2024',time:'3 jam lalu',unread:true,bg:'#ede9fe'},
-  {icon:'🎓',title:'Program Latihan Akan Datang',desc:'Kursus AutoCAD Lanjutan — 12–13 Jun 2025',time:'Semalam',unread:false,bg:'#d1fae5'},
-  {icon:'📊',title:'Laporan Bulanan Sedia',desc:'Laporan Kehadiran Mei 2025 telah dijana',time:'2 hari lalu',unread:false,bg:'#dbeafe'},
-  {icon:'🆕',title:'Staf Baru Didaftarkan',desc:'Nur Farhana binti Kamal telah disahkan aktif',time:'3 hari lalu',unread:false,bg:'#d1fae5'},
-];
-
-/* ── charts.js ───────────────────────────────────────────── */
-function renderBarChart(containerId,items,max){
-  max=max||100; const el=document.getElementById(containerId); if(!el)return;
-  el.innerHTML=items.map(item=>{const pct=Math.round((item.value/max)*100),color=item.color||'var(--accent)';
-    return`<div class="bar-row"><div class="bar-label" title="${item.label}">${item.label}</div><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div><div class="bar-val" style="color:${color}">${item.value}${item.unit||''}</div></div>`;
-  }).join('');
-}
-function renderColumnChart(containerId,labels,values,highlightIdx){
-  const el=document.getElementById(containerId); if(!el)return;
-  const max=Math.max(...values);
-  el.innerHTML=`<div style="display:flex;align-items:flex-end;gap:6px;height:140px;padding:0 4px">${labels.map((lbl,i)=>{
-    const pct=(values[i]/max)*100, isHl=i===(highlightIdx!==undefined?highlightIdx:labels.length-1);
-    return`<div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:3px"><div style="font-size:10px;font-weight:${isHl?700:400};color:${isHl?'var(--accent)':'var(--text-muted)'}">${values[i]}%</div><div style="width:100%;background:${isHl?'var(--accent)':'#0f62fe55'};border-radius:2px 2px 0 0;height:${pct*1.1}px;min-height:4px;transition:height .5s"></div><div style="font-size:10px;color:${isHl?'var(--accent)':'var(--text-muted)'};font-weight:${isHl?700:400}">${lbl}</div></div>`;
-  }).join('')}</div>`;
-}
-function renderDonut(svgId,legendId,segments,opts){
-  opts=opts||{}; const cx=opts.cx||70,cy=opts.cy||70,R=opts.R||55,r=opts.r||32;
-  const total=segments.reduce((s,x)=>s+x.value,0); let angle=-Math.PI/2, paths='';
-  segments.forEach(seg=>{
-    const sweep=(seg.value/total)*Math.PI*2;
-    const x1=cx+R*Math.cos(angle),y1=cy+R*Math.sin(angle),x2=cx+R*Math.cos(angle+sweep),y2=cy+R*Math.sin(angle+sweep);
-    const xi1=cx+r*Math.cos(angle+sweep),yi1=cy+r*Math.sin(angle+sweep),xi2=cx+r*Math.cos(angle),yi2=cy+r*Math.sin(angle);
-    const large=sweep>Math.PI?1:0;
-    paths+=`<path d="M${x1.toFixed(2)},${y1.toFixed(2)} A${R},${R} 0 ${large},1 ${x2.toFixed(2)},${y2.toFixed(2)} L${xi1.toFixed(2)},${yi1.toFixed(2)} A${r},${r} 0 ${large},0 ${xi2.toFixed(2)},${yi2.toFixed(2)} Z" fill="${seg.color}" stroke="#fff" stroke-width="2" title="${seg.label}: ${seg.value}"/>`;
-    angle+=sweep;
-  });
-  const svgEl=document.getElementById(svgId);
-  if(svgEl)svgEl.innerHTML=paths+`<text x="${cx}" y="${cy-5}" text-anchor="middle" font-size="16" font-weight="600" fill="#161616">${total}</text><text x="${cx}" y="${cy+11}" text-anchor="middle" font-size="10" fill="#6f6f6f">Staf</text>`;
-  const legEl=document.getElementById(legendId);
-  if(legEl)legEl.innerHTML=segments.map(s=>`<div class="legend-item"><div class="legend-dot" style="background:${s.color}"></div><span>${s.label}: <strong>${s.value}</strong></span></div>`).join('');
-}
-
-/* ── staf.js ─────────────────────────────────────────────── */
-(function(){
-  let currentPage=1; const PER_PAGE=15; let filtered=[];
-  function getInitials(n){return n.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();}
-  function statusBadge(s){const cls=s==='Aktif'?'b-green':s==='Cuti'?'b-yellow':'b-red';return`<span class="badge ${cls}">${s}</span>`;}
-  function renderTable(){
-    const start=(currentPage-1)*PER_PAGE, slice=filtered.slice(start,start+PER_PAGE);
-    const tbody=document.getElementById('staf-tbody'); if(!tbody)return;
-    if(slice.length===0){tbody.innerHTML=`<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">Tiada rekod ditemui</div><p>Cuba ubah kata carian atau penapis.</p></div></td></tr>`;return;}
-    tbody.innerHTML=slice.map((s,i)=>`<tr onclick="StafModule.showDetail(${s.id-1})"><td>${start+i+1}</td><td><div class="flex-center"><div class="avatar av-32" style="background:${s.avatarColor}">${getInitials(s.nama)}</div><div><div class="fw-600">${s.nama}</div><div class="text-xs text-muted">${s.email}</div></div></div></td><td><code class="chip">${s.noPerkerja}</code></td><td class="text-sm">${s.jawatan}</td><td><span class="badge b-blue" style="font-size:10px">${s.bahagian}</span></td><td><span class="badge b-gray">${s.gred}</span></td><td>${statusBadge(s.status)}</td><td><button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();StafModule.showDetail(${s.id-1})">👁 Lihat</button></td></tr>`).join('');
-    document.getElementById('staf-count').textContent=filtered.length;
-    document.getElementById('staf-page-info').textContent=`Menunjukkan ${start+1}–${Math.min(start+PER_PAGE,filtered.length)} daripada ${filtered.length} rekod`;
-    renderPagination();
-  }
-  function renderPagination(){
-    const total=Math.ceil(filtered.length/PER_PAGE), cont=document.getElementById('staf-pagination'); if(!cont)return;
-    let html=`<button class="page-btn" onclick="StafModule.goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹ Sebelum</button>`;
-    for(let p=1;p<=total;p++){
-      if(p===1||p===total||Math.abs(p-currentPage)<=1)html+=`<button class="page-btn ${p===currentPage?'active':''}" onclick="StafModule.goPage(${p})">${p}</button>`;
-      else if(Math.abs(p-currentPage)===2)html+=`<span style="padding:0 4px;color:var(--text-muted)">…</span>`;
-    }
-    html+=`<button class="page-btn" onclick="StafModule.goPage(${currentPage+1})" ${currentPage===total?'disabled':''}>Seterus ›</button>`;
-    cont.innerHTML=html;
-  }
-  window.StafModule={
-    init(){filtered=[...STAF];currentPage=1;renderTable();this.populateCutiSelect();},
-    filter(){
-      const q=(document.getElementById('staf-search')?.value||'').toLowerCase();
-      const b=document.getElementById('staf-filter-bahagian')?.value||'';
-      const g=document.getElementById('staf-filter-gred')?.value||'';
-      const st=document.getElementById('staf-filter-status')?.value||'';
-      filtered=STAF.filter(x=>(!q||x.nama.toLowerCase().includes(q)||x.noPerkerja.toLowerCase().includes(q)||x.jawatan.toLowerCase().includes(q))&&(!b||x.bahagian===b)&&(!g||x.gred===g)&&(!st||x.status===st));
-      currentPage=1;renderTable();
-    },
-    goPage(p){const total=Math.ceil(filtered.length/PER_PAGE);if(p<1||p>total)return;currentPage=p;renderTable();},
-    showDetail(idx){
-      const s=STAF[idx]; if(!s)return;
-      const initials=getInitials(s.nama);
-      const gredLabel=s.skor_lnpt>=90?'Cemerlang':s.skor_lnpt>=80?'Baik':s.skor_lnpt>=70?'Memuaskan':'Perlu Peningkatan';
-      const gredClass=s.skor_lnpt>=90?'b-green':s.skor_lnpt>=80?'b-blue':s.skor_lnpt>=70?'b-yellow':'b-red';
-      document.getElementById('modal-staf-body').innerHTML=`<div class="flex-center" style="gap:16px;margin-bottom:20px"><div class="avatar av-64" style="background:${s.avatarColor}">${initials}</div><div><div style="font-size:18px;font-weight:600">${s.nama}</div><div class="text-muted">${s.jawatan}</div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge b-blue">${s.bahagian}</span><span class="badge b-gray">${s.gred}</span>${statusBadge(s.status)}</div></div></div><hr class="divider"><div class="form-grid" style="gap:12px"><div><div class="form-label">No. Pekerja</div><code class="chip" style="margin-top:4px;display:inline-block">${s.noPerkerja}</code></div><div><div class="form-label">E-mel</div><div class="mt-4">${s.email}</div></div><div><div class="form-label">No. Telefon</div><div class="mt-4">${s.telefon}</div></div><div><div class="form-label">Jantina</div><div class="mt-4">${s.jantina}</div></div><div><div class="form-label">Negeri</div><div class="mt-4">${s.negeri}</div></div><div><div class="form-label">Tarikh Lantikan</div><div class="mt-4">${s.tarikh_lantikan}</div></div></div><hr class="divider"><div style="font-weight:600;margin-bottom:12px">📊 Prestasi & Cuti</div><div class="form-grid" style="gap:12px"><div><div class="form-label">Skor LNPT 2024</div><div style="display:flex;align-items:center;gap:8px;margin-top:6px"><span style="font-size:26px;font-weight:300">${s.skor_lnpt}</span><span style="color:var(--text-muted)">/100</span><span class="badge ${gredClass}">${gredLabel}</span></div><div class="progress-track" style="margin-top:6px"><div class="progress-fill" style="width:${s.skor_lnpt}%;background:${s.skor_lnpt>=80?'var(--success)':'var(--warning)'}"></div></div></div><div><div class="form-label">KPI Semasa</div><div style="font-size:26px;font-weight:300;margin-top:6px">${s.kpi}%</div><div class="progress-track" style="margin-top:6px"><div class="progress-fill" style="width:${s.kpi}%;background:var(--success)"></div></div></div><div><div class="form-label">Baki Cuti Tahunan</div><div style="font-size:18px;font-weight:500;margin-top:4px">${s.cuti_tahunan_baki} / ${s.cuti_tahunan_had} hari</div></div><div><div class="form-label">Baki Cuti Sakit</div><div style="font-size:18px;font-weight:500;margin-top:4px">${s.cuti_sakit_baki} hari</div></div><div><div class="form-label">Kompetensi</div><div style="margin-top:4px"><span class="badge b-purple">${s.kompetensi}</span></div></div></div>`;
-      App.openModal('modal-staf');
-    },
-    populateCutiSelect(){
-      const sel=document.getElementById('cuti-staf-select'); if(!sel)return;
-      sel.innerHTML='<option value="">— Pilih Staf —</option>'+STAF.map(s=>`<option value="${s.id}">${s.nama} (${s.noPerkerja})</option>`).join('');
-    },
-    exportExcel(){alert('✅ Fungsi eksport Excel telah dimulakan.\nFail "Senarai_Staf_JKE_PPD.xlsx" akan dimuat turun dalam beberapa saat.');}
-  };
 })();
 
-/* ── kehadiran.js ────────────────────────────────────────── */
+/* PRESTASI */
 (function(){
-  const BULAN_LABEL=['Jan','Feb','Mac','Apr','Mei','Jun','Jul','Ogos','Sep','Okt','Nov','Dis'];
-  const KEHADIRAN_BULANAN=[88,90,87,92,91,93,89,94,91,90,88,91];
-  function renderKalender(){
-    const header=document.getElementById('cal-header'), grid=document.getElementById('cal-grid'); if(!grid)return;
-    const hari=['Ahd','Isn','Sel','Rab','Kha','Jum','Sab'];
-    if(header)header.innerHTML=hari.map(h=>`<div class="cal-day-label">${h}</div>`).join('');
-    let cells='';
-    for(let i=0;i<30;i++){
-      const d=i+1, dow=(i+0)%7, isWeekend=(dow===0||dow===6);
-      if(isWeekend){cells+=`<div class="cal-cell cal-hujung" title="Hujung minggu">${d}</div>`;}
-      else{const r=sri(d*7+3,0,9),cls=r<7?'cal-hadir':r<9?'cal-cuti':'cal-mc',lbl=cls==='cal-hadir'?'✓ Hadir':cls==='cal-cuti'?'🌴 Cuti':'🏥 MC';cells+=`<div class="cal-cell ${cls}" title="${d} Jun 2025 — ${lbl}">${d}</div>`;}
-    }
-    grid.innerHTML=cells;
-  }
-  function renderHadirTable(){
-    const tbody=document.getElementById('hadir-tbody'); if(!tbody)return;
-    tbody.innerHTML=KEHADIRAN_HARI_INI.map(s=>`<tr><td><div class="flex-center gap-8"><div class="avatar av-32" style="background:${s.avatarColor}">${s.nama.split(' ').slice(0,2).map(w=>w[0]).join('')}</div><span>${s.nama}</span></div></td><td><span style="color:${s.lambat?'var(--danger)':'var(--success)'};font-weight:600">${s.masuk} ${s.lambat?'⚠':''}</span></td><td>${s.keluar}</td><td><span class="badge ${s.lambat?'b-red':'b-green'}">${s.lambat?'Lewat':'Tepat Masa'}</span></td></tr>`).join('');
-  }
-  window.KehadiranModule={
-    init(){
-      renderKalender(); renderHadirTable();
-      renderColumnChart('trend-chart',BULAN_LABEL,KEHADIRAN_BULANAN,5);
-      const el=document.getElementById('ketidakhadiran-chart'); if(!el)return;
-      renderBarChart('ketidakhadiran-chart',[{label:'Cuti Diluluskan',value:4,color:'var(--warning)'},{label:'MC Disahkan',value:3,color:'var(--danger)'},{label:'AWOL',value:1,color:'var(--purple)'}],10);
-    }
-  };
+let lf=[...STAF];
+function gi2(s){if(s>=90)return{label:'Cemerlang',cls:'b-green',color:'var(--success)'};if(s>=80)return{label:'Baik',cls:'b-blue',color:'var(--accent)'};if(s>=70)return{label:'Memuaskan',cls:'b-yellow',color:'var(--warning)'};return{label:'Perlu Peningkatan',cls:'b-red',color:'var(--danger)'};}
+function rl(d){d=d||lf;const tb=document.getElementById('lnpt-tbody');if(!tb)return;tb.innerHTML=d.slice(0,35).map((s,i)=>{const g=gi2(s.skor_lnpt);return`<tr><td>${i+1}</td><td><div class="flex-center"><div class="avatar av-32" style="background:${s.avatarColor}">${s.nama.split(' ').slice(0,2).map(w=>w[0]).join('')}</div><span class="fw-600">${s.nama}</span></div></td><td><span class="badge b-blue" style="font-size:10px">${s.bahagian}</span></td><td><div class="flex-center"><span class="fw-600" style="color:${g.color}">${s.skor_lnpt}</span><div class="progress-track" style="width:56px"><div class="progress-fill" style="width:${s.skor_lnpt}%;background:${g.color}"></div></div></div></td><td><span class="badge ${g.cls}">${g.label}</span></td><td>${s.kpi}%</td><td><span class="badge b-purple">${s.kompetensi}</span></td><td><button class="btn btn-secondary btn-sm" onclick="SM.showDetail(${s.id-1})">Profil</button></td></tr>`;}).join('');}
+window.PM={
+  init(){
+    lf=[...STAF];rl();
+    rBC('kpi-bahagian-chart',BAHAGIAN.map((b,i)=>({label:b,value:sri(i*17+5,78,98),color:sri(i*17+5,78,98)>=90?'var(--success)':'var(--accent)'})),100);
+    const tb=document.getElementById('latihan-tbody');if(tb)tb.innerHTML=LATIHAN_DATA.map((l,i)=>{const c=l.status==='Selesai'?'b-green':l.status==='Akan Datang'?'b-yellow':'b-blue';return`<tr><td>${i+1}</td><td class="fw-600">${l.prog}</td><td class="text-sm text-muted">${l.tarikh}</td><td style="text-align:center;font-weight:600">${l.peserta}</td><td><span class="badge ${c}">${l.status}</span></td><td class="text-sm">${l.pemberi}</td></tr>`;}).join('');
+    const cm=STAF.filter(s=>s.skor_lnpt>=90).length,bk=STAF.filter(s=>s.skor_lnpt>=80&&s.skor_lnpt<90).length,mm=STAF.filter(s=>s.skor_lnpt>=70&&s.skor_lnpt<80).length,lm=STAF.filter(s=>s.skor_lnpt<70).length;
+    rDN('prestasi-donut','prestasi-legend',[{label:'Cemerlang',value:cm,color:'var(--success)'},{label:'Baik',value:bk,color:'var(--accent)'},{label:'Memuaskan',value:mm,color:'var(--warning)'},{label:'Perlu Peningkatan',value:lm,color:'var(--danger)'}]);
+    const ec=document.getElementById('kpi-cemerlang');if(ec)ec.textContent=cm;
+    const eb=document.getElementById('kpi-baik');if(eb)eb.textContent=bk;
+    const em=document.getElementById('kpi-memuaskan');if(em)em.textContent=mm;
+    const el=document.getElementById('kpi-lemah');if(el)el.textContent=lm;
+  },
+  filterLnpt(){const q=(document.getElementById('lnpt-search')?.value||'').toLowerCase();lf=q?STAF.filter(s=>s.nama.toLowerCase().includes(q)):[...STAF];rl(lf);},
+  filterByGred(v){if(!v){lf=[...STAF];rl();return;}const mp={cemerlang:s=>s.skor_lnpt>=90,baik:s=>s.skor_lnpt>=80&&s.skor_lnpt<90,memuaskan:s=>s.skor_lnpt>=70&&s.skor_lnpt<80,lemah:s=>s.skor_lnpt<70};lf=STAF.filter(mp[v]||(()=>true));rl(lf);}
+};
 })();
 
-/* ── cuti.js ─────────────────────────────────────────────── */
+/* LAPORAN */
 (function(){
-  function statusBadge(s){const cls=s==='Diluluskan'?'b-green':s==='Tertangguh'?'b-yellow':'b-red';return`<span class="badge ${cls}">${s}</span>`;}
-  function renderTertangguh(){
-    const data=CUTI_DATA.filter(c=>c.status==='Tertangguh'), tbody=document.getElementById('cuti-tertangguh-tbody'); if(!tbody)return;
-    tbody.innerHTML=data.map(c=>`<tr><td class="fw-600">${c.staf}</td><td><span class="badge b-blue">${c.jenis}</span></td><td>${c.mula}</td><td>${c.tamat}</td><td style="text-align:center;font-weight:600">${c.hari}</td><td class="text-sm text-muted">${c.sebab}</td><td><button class="btn btn-success btn-sm" onclick="CutiModule.lulus(${c.id})">✓ Lulus</button><button class="btn btn-danger btn-sm" style="margin-left:4px" onclick="CutiModule.tolak(${c.id})">✗ Tolak</button></td></tr>`).join('');
-  }
-  function renderSemua(){
-    const tbody=document.getElementById('cuti-semua-tbody'); if(!tbody)return;
-    tbody.innerHTML=CUTI_DATA.map((c,i)=>`<tr><td>${i+1}</td><td class="fw-600">${c.staf}</td><td><span class="badge b-blue">${c.jenis}</span></td><td class="text-sm">${c.mula}</td><td class="text-sm">${c.tamat}</td><td>${c.hari} hari</td><td>${statusBadge(c.status)}</td></tr>`).join('');
-  }
-  function renderBakiCuti(){
-    const tbody=document.getElementById('baki-tbody'); if(!tbody)return;
-    tbody.innerHTML=STAF.slice(0,35).map(s=>{
-      const used=s.cuti_tahunan_had-s.cuti_tahunan_baki, pct=Math.round((used/s.cuti_tahunan_had)*100);
-      const barColor=pct>80?'var(--danger)':pct>60?'var(--warning)':'var(--accent)';
-      return`<tr><td class="fw-600">${s.nama}</td><td><div class="flex-center"><strong>${s.cuti_tahunan_baki}</strong><span class="text-muted"> / ${s.cuti_tahunan_had}</span><div class="progress-track" style="width:70px;margin-left:8px"><div class="progress-fill" style="width:${pct}%;background:${barColor}"></div></div></div></td><td>${s.cuti_sakit_baki} hari</td><td>${sri(s.id*7+3,0,1)?'3 hari':'—'}</td><td>${sri(s.id*11+4,0,5)?'—':'2 hari'}</td></tr>`;
-    }).join('');
-  }
-  window.CutiModule={
-    init(){renderTertangguh();renderSemua();renderBakiCuti();},
-    filterBaki(){
-      const q=(document.getElementById('baki-search')?.value||'').toLowerCase(), tbody=document.getElementById('baki-tbody'); if(!tbody)return;
-      const sample=q?STAF.filter(s=>s.nama.toLowerCase().includes(q)).slice(0,35):STAF.slice(0,35);
-      tbody.innerHTML=sample.map(s=>{const used=s.cuti_tahunan_had-s.cuti_tahunan_baki,pct=Math.round((used/s.cuti_tahunan_had)*100);return`<tr><td class="fw-600">${s.nama}</td><td><strong>${s.cuti_tahunan_baki}</strong> / ${s.cuti_tahunan_had}</td><td>${s.cuti_sakit_baki} hari</td><td>${sri(s.id*7+3,0,1)?'3 hari':'—'}</td><td>—</td></tr>`;}).join('');
-    },
-    lulus(id){const c=CUTI_DATA.find(x=>x.id===id);if(c){c.status='Diluluskan';alert(`✅ Permohonan cuti ${c.staf} telah DILULUSKAN.`);renderTertangguh();document.getElementById('cuti-badge').textContent=CUTI_DATA.filter(x=>x.status==='Tertangguh').length;}},
-    tolak(id){const c=CUTI_DATA.find(x=>x.id===id);if(c){c.status='Ditolak';alert(`❌ Permohonan cuti ${c.staf} telah DITOLAK.`);renderTertangguh();document.getElementById('cuti-badge').textContent=CUTI_DATA.filter(x=>x.status==='Tertangguh').length;}}
-  };
+window.LM={
+  init(){
+    rBC('gred-chart',[{label:'A44',value:8},{label:'A41',value:12},{label:'C52',value:15},{label:'C48',value:10},{label:'C44',value:9},{label:'DH41',value:11},{label:'E41',value:14},{label:'N29',value:7},{label:'F41',value:11}].map(g=>({...g,color:'var(--accent)'})),15);
+    rBC('annual-chart',[{label:'2021',value:86},{label:'2022',value:88},{label:'2023',value:90},{label:'2024',value:91},{label:'2025*',value:92}].map(y=>({...y,color:'var(--success)'})),100);
+    rBC('bahagian-chart',BAHAGIAN.map((b,i)=>({label:b,value:[14,28,16,11,20,8][i],color:['#0f62fe','#24a148','#8a3ffc','#f1c21b','#da1e28','#009d9a'][i]})),30);
+    const tb=document.getElementById('log-laporan-tbody');if(tb)tb.innerHTML=LOG_LAPORAN.map((l,i)=>`<tr><td>${i+1}</td><td class="fw-600">${l.nama}</td><td><span class="badge ${l.jenis==='PDF'?'b-red':'b-green'}">${l.jenis}</span></td><td>${l.tarikh}</td><td>${l.oleh}</td><td class="text-muted">${l.saiz}</td><td><button class="btn btn-secondary btn-sm" onclick="alert('Muat turun: ${l.nama}')">Muat Turun</button></td></tr>`).join('');
+  },
+  janaPDF(j){alert('Jana '+j+'... Laporan sedang disediakan.');}
+};
 })();
 
-/* ── prestasi.js ─────────────────────────────────────────── */
+/* APP SHELL */
 (function(){
-  let lnptFiltered=[...STAF];
-  function gredInfo(s){
-    if(s>=90)return{label:'Cemerlang',cls:'b-green',color:'var(--success)'};
-    if(s>=80)return{label:'Baik',cls:'b-blue',color:'var(--accent)'};
-    if(s>=70)return{label:'Memuaskan',cls:'b-yellow',color:'var(--warning)'};
-    return{label:'Perlu Peningkatan',cls:'b-red',color:'var(--danger)'};
-  }
-  function renderLnptTable(data){
-    data=data||lnptFiltered; const tbody=document.getElementById('lnpt-tbody'); if(!tbody)return;
-    tbody.innerHTML=data.slice(0,35).map((s,i)=>{const g=gredInfo(s.skor_lnpt);return`<tr><td>${i+1}</td><td><div class="flex-center"><div class="avatar av-32" style="background:${s.avatarColor}">${s.nama.split(' ').slice(0,2).map(w=>w[0]).join('')}</div><span class="fw-600">${s.nama}</span></div></td><td><span class="badge b-blue" style="font-size:10px">${s.bahagian}</span></td><td><div class="flex-center"><span class="fw-600" style="color:${g.color}">${s.skor_lnpt}</span><div class="progress-track" style="width:56px"><div class="progress-fill" style="width:${s.skor_lnpt}%;background:${g.color}"></div></div></div></td><td><span class="badge ${g.cls}">${g.label}</span></td><td>${s.kpi}%</td><td><span class="badge b-purple">${s.kompetensi}</span></td><td><button class="btn btn-secondary btn-sm" onclick="StafModule.showDetail(${s.id-1})">📋 Profil</button></td></tr>`;}).join('');
-  }
-  window.PrestasiModule={
-    init(){
-      lnptFiltered=[...STAF]; renderLnptTable();
-      renderBarChart('kpi-bahagian-chart',BAHAGIAN.map((b,i)=>({label:b,value:sri(i*17+5,78,98),color:sri(i*17+5,78,98)>=90?'var(--success)':'var(--accent)'})),100);
-      const tbody=document.getElementById('latihan-tbody'); if(tbody)tbody.innerHTML=LATIHAN_DATA.map((l,i)=>{const cls=l.status==='Selesai'?'b-green':l.status==='Akan Datang'?'b-yellow':'b-blue';return`<tr><td>${i+1}</td><td class="fw-600">${l.prog}</td><td class="text-sm text-muted">${l.tarikh}</td><td style="text-align:center;font-weight:600">${l.peserta}</td><td><span class="badge ${cls}">${l.status}</span></td><td class="text-sm">${l.pemberi}</td></tr>`;}).join('');
-      const cem=STAF.filter(s=>s.skor_lnpt>=90).length, baik=STAF.filter(s=>s.skor_lnpt>=80&&s.skor_lnpt<90).length, mem=STAF.filter(s=>s.skor_lnpt>=70&&s.skor_lnpt<80).length, lem=STAF.filter(s=>s.skor_lnpt<70).length;
-      renderDonut('prestasi-donut','prestasi-legend',[{label:'Cemerlang (≥90)',value:cem,color:'var(--success)'},{label:'Baik (80–89)',value:baik,color:'var(--accent)'},{label:'Memuaskan (70–79)',value:mem,color:'var(--warning)'},{label:'Perlu Peningkatan (<70)',value:lem,color:'var(--danger)'}]);
-    },
-    filterLnpt(){const q=(document.getElementById('lnpt-search')?.value||'').toLowerCase();lnptFiltered=q?STAF.filter(s=>s.nama.toLowerCase().includes(q)):[...STAF];renderLnptTable(lnptFiltered);},
-    filterByGred(val){if(!val){lnptFiltered=[...STAF];renderLnptTable();return;}const map={cemerlang:s=>s.skor_lnpt>=90,baik:s=>s.skor_lnpt>=80&&s.skor_lnpt<90,memuaskan:s=>s.skor_lnpt>=70&&s.skor_lnpt<80,lemah:s=>s.skor_lnpt<70};lnptFiltered=STAF.filter(map[val]||(()=>true));renderLnptTable(lnptFiltered);}
-  };
-})();
-
-/* ── laporan.js ──────────────────────────────────────────── */
-(function(){
-  window.LaporanModule={
-    init(){
-      renderBarChart('gred-chart',[{label:'A44',value:8},{label:'A41',value:12},{label:'C52',value:15},{label:'C48',value:10},{label:'C44',value:9},{label:'DH41',value:11},{label:'E41',value:14},{label:'N29',value:7},{label:'F41',value:11}].map(g=>({...g,color:'var(--accent)'})),15);
-      renderBarChart('annual-chart',[{label:'2021',value:86},{label:'2022',value:88},{label:'2023',value:90},{label:'2024',value:91},{label:'2025*',value:92}].map(y=>({...y,color:'var(--success)'})),100);
-      renderBarChart('bahagian-chart',BAHAGIAN.map((b,i)=>({label:b,value:[14,28,16,11,20,8][i],color:['#0f62fe','#24a148','#8a3ffc','#f1c21b','#da1e28','#009d9a'][i]})),30);
-      const tbody=document.getElementById('log-laporan-tbody'); if(tbody)tbody.innerHTML=LOG_LAPORAN.map((l,i)=>`<tr><td>${i+1}</td><td class="fw-600">${l.nama}</td><td><span class="badge ${l.jenis==='PDF'?'b-red':'b-green'}">${l.jenis}</span></td><td class="text-sm">${l.tarikh}</td><td class="text-sm">${l.oleh}</td><td class="text-sm text-muted">${l.saiz}</td><td><button class="btn btn-secondary btn-sm" onclick="alert('Muat turun dimulakan: ${l.nama}')">⬇ Muat Turun</button></td></tr>`).join('');
-    },
-    janaPDF(jenis){alert(`📄 Jana ${jenis}...\n\nLaporan sedang disediakan. Fail PDF akan dimuat turun dalam beberapa saat.`);}
-  };
-})();
-
-/* ── app.js ──────────────────────────────────────────────── */
-(function(){
-  const LAYOUT_HTML = `
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-logo">
-      <div class="logo-emblem">⚡</div>
-      <div class="logo-title">JKE PPD</div>
-      <div class="logo-subtitle">Jabatan Kejuruteraan Elektrik<br>PPD</div>
-      <span class="logo-badge">● SISTEM AKTIF</span>
+const HTML=`
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo"><div class="logo-emblem">&#9889;</div><div class="logo-title">JKE PPD</div><div class="logo-subtitle">Jabatan Kejuruteraan Elektrik<br>PPD</div><span class="logo-badge">&#9679; SISTEM AKTIF</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-section"><div class="nav-section-label">Utama</div><div class="nav-item active" id="nav-overview" onclick="App.go('overview')"><span class="nav-item-icon">&#8859;</span><span class="nav-item-label">Overview KPI</span></div></div>
+    <div class="nav-section"><div class="nav-section-label">Pengurusan</div>
+      <div class="nav-item" id="nav-staf" onclick="App.go('staf')"><span class="nav-item-icon">&#128101;</span><span class="nav-item-label">Direktori Staf</span></div>
+      <div class="nav-item" id="nav-kehadiran" onclick="App.go('kehadiran')"><span class="nav-item-icon">&#128197;</span><span class="nav-item-label">Rekod Kehadiran</span></div>
+      <div class="nav-item" id="nav-cuti" onclick="App.go('cuti')"><span class="nav-item-icon">&#127796;</span><span class="nav-item-label">Sistem Cuti</span><span class="nav-badge" id="cuti-badge">7</span></div>
     </div>
-    <nav class="sidebar-nav">
-      <div class="nav-section">
-        <div class="nav-section-label">Utama</div>
-        <div class="nav-item active" id="nav-overview" onclick="App.go('overview')"><span class="nav-item-icon">⊞</span><span class="nav-item-label">Overview KPI</span></div>
-      </div>
-      <div class="nav-section">
-        <div class="nav-section-label">Pengurusan</div>
-        <div class="nav-item" id="nav-staf" onclick="App.go('staf')"><span class="nav-item-icon">👥</span><span class="nav-item-label">Direktori Staf</span></div>
-        <div class="nav-item" id="nav-kehadiran" onclick="App.go('kehadiran')"><span class="nav-item-icon">📅</span><span class="nav-item-label">Rekod Kehadiran</span></div>
-        <div class="nav-item" id="nav-cuti" onclick="App.go('cuti')"><span class="nav-item-icon">🌴</span><span class="nav-item-label">Sistem Cuti</span><span class="nav-badge" id="cuti-badge">7</span></div>
-      </div>
-      <div class="nav-section">
-        <div class="nav-section-label">Penilaian</div>
-        <div class="nav-item" id="nav-prestasi" onclick="App.go('prestasi')"><span class="nav-item-icon">⭐</span><span class="nav-item-label">Penilaian Prestasi</span></div>
-        <div class="nav-item" id="nav-laporan" onclick="App.go('laporan')"><span class="nav-item-icon">📊</span><span class="nav-item-label">Laporan & Statistik</span></div>
-      </div>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="user-card">
-        <div class="user-avatar-sm">PA</div>
-        <div><div class="user-name">Prof. Ahmad Razak</div><div class="user-role">Pengarah JKE PPD</div></div>
-      </div>
+    <div class="nav-section"><div class="nav-section-label">Penilaian</div>
+      <div class="nav-item" id="nav-prestasi" onclick="App.go('prestasi')"><span class="nav-item-icon">&#11088;</span><span class="nav-item-label">Penilaian Prestasi</span></div>
+      <div class="nav-item" id="nav-laporan" onclick="App.go('laporan')"><span class="nav-item-icon">&#128202;</span><span class="nav-item-label">Laporan &amp; Statistik</span></div>
     </div>
-  </aside>
-  <div class="main-area">
-    <header class="topbar">
-      <div class="topbar-title" id="topbar-title">Overview KPI</div>
-      <div class="topbar-date" id="topbar-date"></div>
-      <button class="btn-topbar" onclick="App.go('cuti')">🌴 Cuti Tertangguh <span id="topbar-cuti-count">(7)</span></button>
-      <button class="btn-topbar primary" onclick="App.openModal('modal-notif')">🔔 Notifikasi <span id="notif-badge" style="background:#fff;color:var(--accent);border-radius:20px;padding:0 5px;font-size:10px;font-weight:700">3</span></button>
-    </header>
-    <main class="content" id="main-content">
-      <!-- PAGE 1: OVERVIEW -->
-      <div class="page active" id="page-overview">
-        <div class="page-header"><div class="page-title">Overview KPI Jabatan</div><div class="page-subtitle">Paparan semasa pengurusan JKE PPD — Kemaskini: <span id="last-update"></span></div></div>
-        <div class="kpi-grid">
-          <div class="kpi-card kpi-blue"><div class="kpi-label">Jumlah Staf</div><div class="kpi-value">97</div><div class="kpi-sub">Aktif: 94 &nbsp;|&nbsp; Dalam Percubaan: 3</div><div class="kpi-trend trend-up">▲ 3.2% berbanding tahun lalu</div></div>
-          <div class="kpi-card kpi-green"><div class="kpi-label">Kehadiran Hari Ini</div><div class="kpi-value">89</div><div class="kpi-sub">Kadar kehadiran: 91.7%</div><div class="kpi-trend trend-up">▲ Melebihi sasaran 90%</div></div>
-          <div class="kpi-card kpi-yellow"><div class="kpi-label">Permohonan Cuti</div><div class="kpi-value">7</div><div class="kpi-sub">Tertangguh kelulusan</div><div class="kpi-trend trend-down">▼ 2 kes mendesak hari ini</div></div>
-          <div class="kpi-card kpi-red"><div class="kpi-label">Staf Tidak Hadir</div><div class="kpi-value">8</div><div class="kpi-sub">MC: 3 &nbsp;|&nbsp; Cuti: 4 &nbsp;|&nbsp; AWOL: 1</div><div class="kpi-trend trend-down">▼ AWOL perlu tindakan</div></div>
-          <div class="kpi-card kpi-purple"><div class="kpi-label">Purata Skor LNPT</div><div class="kpi-value">84%</div><div class="kpi-sub">Penilaian 2024 — 97 staf</div><div class="kpi-trend trend-up">▲ Meningkat 2 mata</div></div>
-          <div class="kpi-card kpi-teal"><div class="kpi-label">Program Latihan</div><div class="kpi-value">23</div><div class="kpi-sub">Staf dalam program aktif</div><div class="kpi-trend trend-up">▲ 3 program bulan ini</div></div>
-        </div>
-        <div class="grid-2">
-          <div class="card"><div class="card-header"><div class="card-title">📈 Trend Kehadiran Bulanan (%)</div></div><div class="card-body"><div id="ov-kehadiran-chart"></div></div></div>
-          <div class="card"><div class="card-header"><div class="card-title">🏢 Komposisi Staf Mengikut Bahagian</div></div><div class="card-body"><div class="donut-wrap"><svg id="ov-donut" width="140" height="140" viewBox="0 0 140 140"></svg><div id="ov-donut-legend" class="donut-legend"></div></div></div></div>
-        </div>
-        <div class="grid-2">
-          <div class="card"><div class="card-header"><div class="card-title">⭐ Skor Prestasi Mengikut Bahagian</div></div><div class="card-body"><div id="ov-prestasi-chart"></div></div></div>
-          <div class="card"><div class="card-header"><div class="card-title">🕐 Aktiviti Terkini</div></div><div class="card-body"><div class="activity-list" id="ov-activity"></div></div></div>
-        </div>
-        <div class="card mb-0"><div class="card-header"><div class="card-title">⚡ Tindakan Pantas</div></div><div class="card-body"><div class="quick-actions"><button class="btn btn-primary" onclick="App.go('cuti')">✅ Lulus Permohonan Cuti</button><button class="btn btn-secondary" onclick="App.openModal('modal-tambah-staf')">➕ Tambah Staf Baru</button><button class="btn btn-secondary" onclick="App.go('prestasi')">📝 Kemaskini LNPT</button><button class="btn btn-secondary" onclick="App.go('laporan')">📄 Jana Laporan Bulanan</button><button class="btn btn-secondary" onclick="App.go('kehadiran')">📅 Semak Ketidakhadiran</button></div></div></div>
+  </nav>
+  <div class="sidebar-footer"><div class="user-card"><div class="user-avatar-sm">PA</div><div><div class="user-name">Prof. Ahmad Razak</div><div class="user-role">Pengarah JKE PPD</div></div></div></div>
+</aside>
+<div class="main-area">
+  <header class="topbar">
+    <div class="topbar-title" id="topbar-title">Overview KPI</div>
+    <div class="topbar-date" id="topbar-date"></div>
+    <button class="btn-topbar" onclick="App.go('cuti')">Cuti Tertangguh (7)</button>
+    <button class="btn-topbar primary" onclick="App.openModal('modal-notif')">Notifikasi (3)</button>
+  </header>
+  <main class="content">
+    <div class="page active" id="page-overview">
+      <div class="page-header"><div class="page-title">Overview KPI Jabatan</div><div class="page-subtitle">Paparan semasa pengurusan JKE PPD - Kemaskini: <span id="last-update"></span></div></div>
+      <div class="kpi-grid">
+        <div class="kpi-card kpi-blue"><div class="kpi-label">Jumlah Staf</div><div class="kpi-value">97</div><div class="kpi-sub">Aktif: 94 | Percubaan: 3</div><div class="kpi-trend trend-up">&#9650; 3.2% berbanding tahun lalu</div></div>
+        <div class="kpi-card kpi-green"><div class="kpi-label">Kehadiran Hari Ini</div><div class="kpi-value">89</div><div class="kpi-sub">Kadar: 91.7%</div><div class="kpi-trend trend-up">&#9650; Melebihi sasaran 90%</div></div>
+        <div class="kpi-card kpi-yellow"><div class="kpi-label">Permohonan Cuti</div><div class="kpi-value">7</div><div class="kpi-sub">Tertangguh kelulusan</div><div class="kpi-trend trend-down">&#9660; 2 kes mendesak</div></div>
+        <div class="kpi-card kpi-red"><div class="kpi-label">Staf Tidak Hadir</div><div class="kpi-value">8</div><div class="kpi-sub">MC:3 Cuti:4 AWOL:1</div><div class="kpi-trend trend-down">&#9660; AWOL perlu tindakan</div></div>
+        <div class="kpi-card kpi-purple"><div class="kpi-label">Purata Skor LNPT</div><div class="kpi-value">84%</div><div class="kpi-sub">Penilaian 2024</div><div class="kpi-trend trend-up">&#9650; Meningkat 2 mata</div></div>
+        <div class="kpi-card kpi-teal"><div class="kpi-label">Program Latihan</div><div class="kpi-value">23</div><div class="kpi-sub">Staf dalam program aktif</div><div class="kpi-trend trend-up">&#9650; 3 program bulan ini</div></div>
       </div>
-      <!-- PAGE 2: STAF -->
-      <div class="page" id="page-staf">
-        <div class="page-header"><div class="page-title">Direktori Staf JKE PPD</div><div class="page-subtitle">Pengurusan maklumat 97 orang staf</div></div>
-        <div class="search-bar">
-          <input class="search-input" id="staf-search" placeholder="🔍  Cari nama, no. pekerja, jawatan…" oninput="StafModule.filter()">
-          <select class="filter-select" id="staf-filter-bahagian" onchange="StafModule.filter()"><option value="">Semua Bahagian</option><option>DET</option><option>DEP</option><option>DTK</option><option>DEG</option><option>DEQ</option><option>Staf Sokongan</option></select>
-          <select class="filter-select" id="staf-filter-gred" onchange="StafModule.filter()"><option value="">Semua Gred</option><option>A44</option><option>A41</option><option>C52</option><option>C48</option><option>C44</option><option>F41</option><option>W44</option><option>J41</option><option>S41</option></select>
-          <select class="filter-select" id="staf-filter-status" onchange="StafModule.filter()"><option value="">Semua Status</option><option>Aktif</option><option>Cuti</option><option>Sakit</option></select>
-          <button class="btn btn-primary" onclick="App.openModal('modal-tambah-staf')">➕ Tambah Staf</button>
-        </div>
-        <div class="card">
-          <div class="card-header"><div class="card-title">Senarai Staf (<span id="staf-count">97</span> rekod)</div><button class="btn-topbar" onclick="StafModule.exportExcel()">⬇ Eksport Excel</button></div>
-          <div class="tbl-wrap"><table><thead><tr><th>No.</th><th>Nama</th><th>No. Pekerja</th><th>Jawatan</th><th>Bahagian</th><th>Gred</th><th>Status</th><th>Tindakan</th></tr></thead><tbody id="staf-tbody"></tbody></table></div>
-          <div class="card-footer"><div class="page-info" id="staf-page-info"></div><div class="pagination" id="staf-pagination"></div></div>
-        </div>
+      <div class="grid-2">
+        <div class="card"><div class="card-header"><div class="card-title">Trend Kehadiran Bulanan (%)</div></div><div class="card-body"><div id="ov-kehadiran-chart"></div></div></div>
+        <div class="card"><div class="card-header"><div class="card-title">Komposisi Staf Mengikut Bahagian</div></div><div class="card-body"><div class="donut-wrap"><svg id="ov-donut" width="140" height="140" viewBox="0 0 140 140"></svg><div id="ov-donut-legend" class="donut-legend"></div></div></div></div>
       </div>
-      <!-- PAGE 3: KEHADIRAN -->
-      <div class="page" id="page-kehadiran">
-        <div class="page-header"><div class="page-title">Rekod Kehadiran Staf</div><div class="page-subtitle">Pemantauan kehadiran harian, mingguan dan bulanan</div></div>
-        <div class="stat-row">
-          <div class="stat-box"><div class="stat-val" style="color:var(--accent)">89</div><div class="stat-label">Hadir Hari Ini</div></div>
-          <div class="stat-box"><div class="stat-val" style="color:var(--success)">91.7%</div><div class="stat-label">Kadar Kehadiran</div></div>
-          <div class="stat-box"><div class="stat-val" style="color:var(--danger)">3</div><div class="stat-label">MC</div></div>
-          <div class="stat-box"><div class="stat-val" style="color:var(--warning)">4</div><div class="stat-label">Dalam Cuti</div></div>
-          <div class="stat-box"><div class="stat-val" style="color:var(--purple)">1</div><div class="stat-label">AWOL</div></div>
-          <div class="stat-box"><div class="stat-val" style="color:var(--teal)">15</div><div class="stat-label">Hadir Awal</div></div>
-        </div>
-        <div class="grid-2">
-          <div class="card"><div class="card-header"><div class="card-title">📅 Kalender Kehadiran — Jun 2025</div></div><div class="card-body"><div class="cal-header-grid" id="cal-header"></div><div class="cal-grid" id="cal-grid"></div><div class="cal-legend"><div class="cal-leg"><div class="cal-leg-dot" style="background:var(--accent)"></div>Hadir</div><div class="cal-leg"><div class="cal-leg-dot" style="background:var(--warning)"></div>Cuti</div><div class="cal-leg"><div class="cal-leg-dot" style="background:var(--danger)"></div>MC</div><div class="cal-leg"><div class="cal-leg-dot" style="background:#e0e0e0"></div>Hujung Minggu</div></div></div></div>
-          <div class="card"><div class="card-header"><div class="card-title">⏱ Rekod Masuk Hari Ini</div></div><div class="tbl-wrap" style="max-height:300px;overflow-y:auto"><table><thead><tr><th>Nama</th><th>Masa Masuk</th><th>Masa Keluar</th><th>Status</th></tr></thead><tbody id="hadir-tbody"></tbody></table></div></div>
-        </div>
-        <div class="card"><div class="card-header"><div class="card-title">📊 Trend Kehadiran 12 Bulan (2024–2025)</div></div><div class="card-body"><div id="trend-chart" style="overflow-x:auto"></div></div></div>
-        <div class="card mb-0"><div class="card-header"><div class="card-title">⚠️ Pecahan Ketidakhadiran Hari Ini</div></div><div class="card-body"><div id="ketidakhadiran-chart"></div></div></div>
+      <div class="grid-2">
+        <div class="card"><div class="card-header"><div class="card-title">Skor Prestasi Mengikut Bahagian</div></div><div class="card-body"><div id="ov-prestasi-chart"></div></div></div>
+        <div class="card"><div class="card-header"><div class="card-title">Aktiviti Terkini</div></div><div class="card-body"><div class="activity-list" id="ov-activity"></div></div></div>
       </div>
-      <!-- PAGE 4: CUTI -->
-      <div class="page" id="page-cuti">
-        <div class="page-header"><div class="page-title">Sistem Pengurusan Cuti</div><div class="page-subtitle">Permohonan, kelulusan dan rekod cuti staf</div></div>
-        <div class="tabs"><div class="tab active" onclick="App.switchTab('cuti','tertangguh',this)">🕐 Tertangguh (7)</div><div class="tab" onclick="App.switchTab('cuti','semua',this)">📋 Semua Permohonan</div><div class="tab" onclick="App.switchTab('cuti','baki',this)">📊 Baki Cuti Staf</div><div class="tab" onclick="App.switchTab('cuti','permohonan',this)">➕ Permohonan Baru</div></div>
-        <div class="tab-pane active" id="cuti-tertangguh"><div class="card mb-0"><div class="card-header"><div class="card-title">Permohonan Menunggu Kelulusan</div></div><div class="tbl-wrap"><table><thead><tr><th>Nama Staf</th><th>Jenis Cuti</th><th>Tarikh Mula</th><th>Tarikh Tamat</th><th>Hari</th><th>Sebab</th><th>Tindakan</th></tr></thead><tbody id="cuti-tertangguh-tbody"></tbody></table></div></div></div>
-        <div class="tab-pane" id="cuti-semua"><div class="card mb-0"><div class="card-header"><div class="card-title">Semua Permohonan Cuti 2025</div></div><div class="tbl-wrap"><table><thead><tr><th>No.</th><th>Nama Staf</th><th>Jenis</th><th>Tarikh Mula</th><th>Tarikh Tamat</th><th>Hari</th><th>Status</th></tr></thead><tbody id="cuti-semua-tbody"></tbody></table></div></div></div>
-        <div class="tab-pane" id="cuti-baki"><div class="search-bar"><input class="search-input" id="baki-search" placeholder="🔍 Cari nama staf…" oninput="CutiModule.filterBaki()" style="max-width:320px"></div><div class="card mb-0"><div class="card-header"><div class="card-title">Baki Cuti Staf 2025</div></div><div class="tbl-wrap"><table><thead><tr><th>Nama Staf</th><th>Cuti Tahunan (Baki/Had)</th><th>Cuti Sakit (Baki)</th><th>Cuti Khas</th><th>Cuti Tanpa Gaji</th></tr></thead><tbody id="baki-tbody"></tbody></table></div></div></div>
-        <div class="tab-pane" id="cuti-permohonan"><div class="card" style="max-width:600px"><div class="card-header"><div class="card-title">Permohonan Cuti Baru</div></div><div class="card-body"><div class="form-grid"><div class="form-group"><label class="form-label">Nama Staf *</label><select class="form-select" id="cuti-staf-select"><option value="">— Pilih Staf —</option></select></div><div class="form-group"><label class="form-label">Jenis Cuti *</label><select class="form-select"><option>Cuti Tahunan</option><option>Cuti Sakit</option><option>Cuti Khas (Berkabung)</option><option>Cuti Tanpa Gaji</option><option>Cuti Bersalin</option><option>Cuti Haji</option></select></div><div class="form-group"><label class="form-label">Tarikh Mula *</label><input type="date" class="form-input"></div><div class="form-group"><label class="form-label">Tarikh Tamat *</label><input type="date" class="form-input"></div></div><div class="form-group" style="margin-top:8px"><label class="form-label">Sebab / Catatan</label><textarea class="form-textarea" placeholder="Nyatakan sebab permohonan cuti…"></textarea></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn btn-primary" onclick="alert('✅ Permohonan cuti telah dihantar untuk kelulusan.')">Hantar Permohonan</button><button class="btn btn-secondary">Batal</button></div></div></div></div>
+      <div class="card mb-0"><div class="card-header"><div class="card-title">Tindakan Pantas</div></div><div class="card-body"><div class="quick-actions"><button class="btn btn-primary" onclick="App.go('cuti')">Lulus Permohonan Cuti</button><button class="btn btn-secondary" onclick="App.openModal('modal-tambah-staf')">Tambah Staf Baru</button><button class="btn btn-secondary" onclick="App.go('prestasi')">Kemaskini LNPT</button><button class="btn btn-secondary" onclick="App.go('laporan')">Jana Laporan</button><button class="btn btn-secondary" onclick="App.go('kehadiran')">Semak Kehadiran</button></div></div></div>
+    </div>
+    <div class="page" id="page-staf">
+      <div class="page-header"><div class="page-title">Direktori Staf JKE PPD</div><div class="page-subtitle">Pengurusan maklumat 97 orang staf</div></div>
+      <div class="search-bar">
+        <input class="search-input" id="staf-search" placeholder="Cari nama, no. pekerja, jawatan..." oninput="SM.filter()">
+        <select class="filter-select" id="staf-filter-bahagian" onchange="SM.filter()"><option value="">Semua Bahagian</option><option>DET</option><option>DEP</option><option>DTK</option><option>DEG</option><option>DEQ</option><option>Staf Sokongan</option></select>
+        <select class="filter-select" id="staf-filter-gred" onchange="SM.filter()"><option value="">Semua Gred</option><option>A44</option><option>A41</option><option>C52</option><option>C48</option><option>C44</option><option>F41</option><option>W44</option><option>J41</option><option>S41</option></select>
+        <select class="filter-select" id="staf-filter-status" onchange="SM.filter()"><option value="">Semua Status</option><option>Aktif</option><option>Cuti</option><option>Sakit</option></select>
+        <button class="btn btn-primary" onclick="App.openModal('modal-tambah-staf')">+ Tambah Staf</button>
       </div>
-      <!-- PAGE 5: PRESTASI -->
-      <div class="page" id="page-prestasi">
-        <div class="page-header"><div class="page-title">Penilaian Prestasi Staf</div><div class="page-subtitle">Rekod LNPT, KPI dan program latihan & pembangunan 2024/2025</div></div>
-        <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
-          <div class="kpi-card kpi-green"><div class="kpi-label">Cemerlang (≥90)</div><div class="kpi-value" id="kpi-cemerlang">—</div><div class="kpi-sub">staf</div></div>
-          <div class="kpi-card kpi-blue"><div class="kpi-label">Baik (80–89)</div><div class="kpi-value" id="kpi-baik">—</div><div class="kpi-sub">staf</div></div>
-          <div class="kpi-card kpi-yellow"><div class="kpi-label">Memuaskan (70–79)</div><div class="kpi-value" id="kpi-memuaskan">—</div><div class="kpi-sub">staf</div></div>
-          <div class="kpi-card kpi-red"><div class="kpi-label">Perlu Peningkatan (&lt;70)</div><div class="kpi-value" id="kpi-lemah">—</div><div class="kpi-sub">staf</div></div>
-        </div>
-        <div class="tabs"><div class="tab active" onclick="App.switchTab('prestasi','lnpt',this)">📋 Senarai LNPT</div><div class="tab" onclick="App.switchTab('prestasi','kpi',this)">🎯 KPI Bahagian</div><div class="tab" onclick="App.switchTab('prestasi','latihan',this)">🎓 Latihan & Pembangunan</div><div class="tab" onclick="App.switchTab('prestasi','komposisi',this)">📊 Komposisi Prestasi</div></div>
-        <div class="tab-pane active" id="prestasi-lnpt"><div class="search-bar"><input class="search-input" id="lnpt-search" placeholder="🔍 Cari nama staf…" oninput="PrestasiModule.filterLnpt()" style="max-width:280px"><select class="filter-select" onchange="PrestasiModule.filterByGred(this.value)"><option value="">Semua Gred Prestasi</option><option value="cemerlang">Cemerlang (≥90)</option><option value="baik">Baik (80–89)</option><option value="memuaskan">Memuaskan (70–79)</option><option value="lemah">Perlu Peningkatan (&lt;70)</option></select></div><div class="card mb-0"><div class="card-header"><div class="card-title">Rekod LNPT 2024</div></div><div class="tbl-wrap"><table><thead><tr><th>No.</th><th>Nama</th><th>Bahagian</th><th>Skor LNPT</th><th>Gred</th><th>KPI (%)</th><th>Kompetensi</th><th>Tindakan</th></tr></thead><tbody id="lnpt-tbody"></tbody></table></div></div></div>
-        <div class="tab-pane" id="prestasi-kpi"><div class="card mb-0"><div class="card-header"><div class="card-title">KPI Semasa Mengikut Bahagian 2025</div></div><div class="card-body"><div id="kpi-bahagian-chart"></div></div></div></div>
-        <div class="tab-pane" id="prestasi-latihan"><div class="card mb-0"><div class="card-header"><div class="card-title">Program Latihan & Pembangunan 2025</div></div><div class="tbl-wrap"><table><thead><tr><th>No.</th><th>Program</th><th>Tarikh</th><th>Peserta</th><th>Status</th><th>Pemberi Latihan</th></tr></thead><tbody id="latihan-tbody"></tbody></table></div></div></div>
-        <div class="tab-pane" id="prestasi-komposisi"><div class="card mb-0" style="max-width:500px"><div class="card-header"><div class="card-title">Komposisi Gred Prestasi LNPT 2024</div></div><div class="card-body"><div class="donut-wrap"><svg id="prestasi-donut" width="140" height="140" viewBox="0 0 140 140"></svg><div id="prestasi-legend" class="donut-legend"></div></div></div></div></div>
+      <div class="card"><div class="card-header"><div class="card-title">Senarai Staf (<span id="staf-count">97</span> rekod)</div><button class="btn-topbar" onclick="SM.exp()">Eksport Excel</button></div><div class="tbl-wrap"><table><thead><tr><th>No.</th><th>Nama</th><th>No. Pekerja</th><th>Jawatan</th><th>Bahagian</th><th>Gred</th><th>Status</th><th>Tindakan</th></tr></thead><tbody id="staf-tbody"></tbody></table></div><div class="card-footer"><div class="page-info" id="staf-page-info"></div><div class="pagination" id="staf-pagination"></div></div></div>
+    </div>
+    <div class="page" id="page-kehadiran">
+      <div class="page-header"><div class="page-title">Rekod Kehadiran Staf</div><div class="page-subtitle">Pemantauan kehadiran harian, mingguan dan bulanan</div></div>
+      <div class="stat-row"><div class="stat-box"><div class="stat-val" style="color:var(--accent)">89</div><div class="stat-label">Hadir Hari Ini</div></div><div class="stat-box"><div class="stat-val" style="color:var(--success)">91.7%</div><div class="stat-label">Kadar Kehadiran</div></div><div class="stat-box"><div class="stat-val" style="color:var(--danger)">3</div><div class="stat-label">MC</div></div><div class="stat-box"><div class="stat-val" style="color:var(--warning)">4</div><div class="stat-label">Dalam Cuti</div></div><div class="stat-box"><div class="stat-val" style="color:var(--purple)">1</div><div class="stat-label">AWOL</div></div><div class="stat-box"><div class="stat-val" style="color:var(--teal)">15</div><div class="stat-label">Hadir Awal</div></div></div>
+      <div class="grid-2">
+        <div class="card"><div class="card-header"><div class="card-title">Kalender Kehadiran - Jun 2025</div></div><div class="card-body"><div class="cal-header-grid" id="cal-header"></div><div class="cal-grid" id="cal-grid"></div><div class="cal-legend"><div class="cal-leg"><div class="cal-leg-dot" style="background:var(--accent)"></div>Hadir</div><div class="cal-leg"><div class="cal-leg-dot" style="background:var(--warning)"></div>Cuti</div><div class="cal-leg"><div class="cal-leg-dot" style="background:var(--danger)"></div>MC</div><div class="cal-leg"><div class="cal-leg-dot" style="background:#e0e0e0"></div>Hujung Minggu</div></div></div></div>
+        <div class="card"><div class="card-header"><div class="card-title">Rekod Masuk Hari Ini</div></div><div class="tbl-wrap" style="max-height:300px;overflow-y:auto"><table><thead><tr><th>Nama</th><th>Masuk</th><th>Keluar</th><th>Status</th></tr></thead><tbody id="hadir-tbody"></tbody></table></div></div>
       </div>
-      <!-- PAGE 6: LAPORAN -->
-      <div class="page" id="page-laporan">
-        <div class="page-header"><div class="page-title">Laporan & Statistik</div><div class="page-subtitle">Jana dan muat turun laporan pengurusan jabatan</div></div>
-        <div class="grid-3">
-          <div class="card"><div class="card-body" style="text-align:center;padding:24px"><div style="font-size:44px;margin-bottom:12px">📋</div><div class="fw-600" style="margin-bottom:6px;font-size:15px">Laporan Kehadiran</div><div class="text-sm text-muted" style="margin-bottom:16px">Rekod kehadiran bulanan semua staf</div><select class="filter-select" style="width:100%;margin-bottom:10px"><option>Jun 2025</option><option>Mei 2025</option><option>Apr 2025</option></select><button class="btn btn-primary" style="width:100%" onclick="LaporanModule.janaPDF('Laporan Kehadiran')">⬇ Jana PDF</button></div></div>
-          <div class="card"><div class="card-body" style="text-align:center;padding:24px"><div style="font-size:44px;margin-bottom:12px">🌴</div><div class="fw-600" style="margin-bottom:6px;font-size:15px">Laporan Cuti</div><div class="text-sm text-muted" style="margin-bottom:16px">Ringkasan permohonan dan baki cuti</div><select class="filter-select" style="width:100%;margin-bottom:10px"><option>2025</option><option>2024</option></select><button class="btn btn-primary" style="width:100%" onclick="LaporanModule.janaPDF('Laporan Cuti')">⬇ Jana PDF</button></div></div>
-          <div class="card"><div class="card-body" style="text-align:center;padding:24px"><div style="font-size:44px;margin-bottom:12px">⭐</div><div class="fw-600" style="margin-bottom:6px;font-size:15px">Laporan LNPT</div><div class="text-sm text-muted" style="margin-bottom:16px">Ringkasan penilaian prestasi tahunan</div><select class="filter-select" style="width:100%;margin-bottom:10px"><option>2024</option><option>2023</option></select><button class="btn btn-primary" style="width:100%" onclick="LaporanModule.janaPDF('Laporan LNPT')">⬇ Jana PDF</button></div></div>
-        </div>
-        <div class="grid-2">
-          <div class="card"><div class="card-header"><div class="card-title">📊 Bilangan Staf Mengikut Gred</div></div><div class="card-body"><div id="gred-chart"></div></div></div>
-          <div class="card"><div class="card-header"><div class="card-title">📈 Trend Kadar Kehadiran Tahunan (%)</div></div><div class="card-body"><div id="annual-chart"></div></div></div>
-        </div>
-        <div class="card"><div class="card-header"><div class="card-title">🏢 Bilangan Staf Mengikut Bahagian</div></div><div class="card-body"><div id="bahagian-chart"></div></div></div>
-        <div class="card mb-0"><div class="card-header"><div class="card-title">📑 Log Laporan Terdahulu</div><button class="btn-topbar">🔄 Muat Semula</button></div><div class="tbl-wrap"><table><thead><tr><th>No.</th><th>Nama Laporan</th><th>Jenis</th><th>Tarikh Jana</th><th>Jana Oleh</th><th>Saiz</th><th>Tindakan</th></tr></thead><tbody id="log-laporan-tbody"></tbody></table></div></div>
+      <div class="card"><div class="card-header"><div class="card-title">Trend Kehadiran 12 Bulan</div></div><div class="card-body"><div id="trend-chart"></div></div></div>
+      <div class="card mb-0"><div class="card-header"><div class="card-title">Pecahan Ketidakhadiran Hari Ini</div></div><div class="card-body"><div id="ketidakhadiran-chart"></div></div></div>
+    </div>
+    <div class="page" id="page-cuti">
+      <div class="page-header"><div class="page-title">Sistem Pengurusan Cuti</div><div class="page-subtitle">Permohonan, kelulusan dan rekod cuti staf</div></div>
+      <div class="tabs"><div class="tab active" onclick="App.switchTab('cuti','tertangguh',this)">Tertangguh (7)</div><div class="tab" onclick="App.switchTab('cuti','semua',this)">Semua Permohonan</div><div class="tab" onclick="App.switchTab('cuti','baki',this)">Baki Cuti Staf</div><div class="tab" onclick="App.switchTab('cuti','permohonan',this)">+ Permohonan Baru</div></div>
+      <div class="tab-pane active" id="cuti-tertangguh"><div class="card mb-0"><div class="card-header"><div class="card-title">Permohonan Menunggu Kelulusan</div></div><div class="tbl-wrap"><table><thead><tr><th>Nama Staf</th><th>Jenis</th><th>Mula</th><th>Tamat</th><th>Hari</th><th>Sebab</th><th>Tindakan</th></tr></thead><tbody id="cuti-tertangguh-tbody"></tbody></table></div></div></div>
+      <div class="tab-pane" id="cuti-semua"><div class="card mb-0"><div class="card-header"><div class="card-title">Semua Permohonan Cuti 2025</div></div><div class="tbl-wrap"><table><thead><tr><th>No.</th><th>Nama</th><th>Jenis</th><th>Mula</th><th>Tamat</th><th>Hari</th><th>Status</th></tr></thead><tbody id="cuti-semua-tbody"></tbody></table></div></div></div>
+      <div class="tab-pane" id="cuti-baki"><div class="search-bar"><input class="search-input" id="baki-search" placeholder="Cari nama staf..." oninput="CM.filterBaki()" style="max-width:320px"></div><div class="card mb-0"><div class="card-header"><div class="card-title">Baki Cuti Staf 2025</div></div><div class="tbl-wrap"><table><thead><tr><th>Nama Staf</th><th>Cuti Tahunan</th><th>Cuti Sakit</th><th>Cuti Khas</th><th>Tanpa Gaji</th></tr></thead><tbody id="baki-tbody"></tbody></table></div></div></div>
+      <div class="tab-pane" id="cuti-permohonan"><div class="card" style="max-width:600px"><div class="card-header"><div class="card-title">Permohonan Cuti Baru</div></div><div class="card-body"><div class="form-grid"><div class="form-group"><label class="form-label">Nama Staf *</label><select class="form-select" id="cuti-staf-select"><option value="">- Pilih Staf -</option></select></div><div class="form-group"><label class="form-label">Jenis Cuti *</label><select class="form-select"><option>Cuti Tahunan</option><option>Cuti Sakit</option><option>Cuti Khas (Berkabung)</option><option>Cuti Tanpa Gaji</option><option>Cuti Bersalin</option><option>Cuti Haji</option></select></div><div class="form-group"><label class="form-label">Tarikh Mula *</label><input type="date" class="form-input"></div><div class="form-group"><label class="form-label">Tarikh Tamat *</label><input type="date" class="form-input"></div></div><div class="form-group" style="margin-top:8px"><label class="form-label">Sebab</label><textarea class="form-textarea" placeholder="Nyatakan sebab..."></textarea></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn btn-primary" onclick="alert('Permohonan dihantar.')">Hantar</button><button class="btn btn-secondary">Batal</button></div></div></div></div>
+    </div>
+    <div class="page" id="page-prestasi">
+      <div class="page-header"><div class="page-title">Penilaian Prestasi Staf</div><div class="page-subtitle">Rekod LNPT, KPI dan program latihan 2024/2025</div></div>
+      <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)"><div class="kpi-card kpi-green"><div class="kpi-label">Cemerlang (90+)</div><div class="kpi-value" id="kpi-cemerlang">-</div><div class="kpi-sub">staf</div></div><div class="kpi-card kpi-blue"><div class="kpi-label">Baik (80-89)</div><div class="kpi-value" id="kpi-baik">-</div><div class="kpi-sub">staf</div></div><div class="kpi-card kpi-yellow"><div class="kpi-label">Memuaskan (70-79)</div><div class="kpi-value" id="kpi-memuaskan">-</div><div class="kpi-sub">staf</div></div><div class="kpi-card kpi-red"><div class="kpi-label">Perlu Peningkatan</div><div class="kpi-value" id="kpi-lemah">-</div><div class="kpi-sub">staf</div></div></div>
+      <div class="tabs"><div class="tab active" onclick="App.switchTab('prestasi','lnpt',this)">Senarai LNPT</div><div class="tab" onclick="App.switchTab('prestasi','kpi',this)">KPI Bahagian</div><div class="tab" onclick="App.switchTab('prestasi','latihan',this)">Latihan &amp; Pembangunan</div><div class="tab" onclick="App.switchTab('prestasi','komposisi',this)">Komposisi Prestasi</div></div>
+      <div class="tab-pane active" id="prestasi-lnpt"><div class="search-bar"><input class="search-input" id="lnpt-search" placeholder="Cari nama staf..." oninput="PM.filterLnpt()" style="max-width:280px"><select class="filter-select" onchange="PM.filterByGred(this.value)"><option value="">Semua Gred</option><option value="cemerlang">Cemerlang (90+)</option><option value="baik">Baik (80-89)</option><option value="memuaskan">Memuaskan (70-79)</option><option value="lemah">Perlu Peningkatan</option></select></div><div class="card mb-0"><div class="card-header"><div class="card-title">Rekod LNPT 2024</div></div><div class="tbl-wrap"><table><thead><tr><th>No.</th><th>Nama</th><th>Bahagian</th><th>Skor LNPT</th><th>Gred</th><th>KPI</th><th>Kompetensi</th><th>Tindakan</th></tr></thead><tbody id="lnpt-tbody"></tbody></table></div></div></div>
+      <div class="tab-pane" id="prestasi-kpi"><div class="card mb-0"><div class="card-header"><div class="card-title">KPI Semasa Mengikut Bahagian 2025</div></div><div class="card-body"><div id="kpi-bahagian-chart"></div></div></div></div>
+      <div class="tab-pane" id="prestasi-latihan"><div class="card mb-0"><div class="card-header"><div class="card-title">Program Latihan &amp; Pembangunan 2025</div></div><div class="tbl-wrap"><table><thead><tr><th>No.</th><th>Program</th><th>Tarikh</th><th>Peserta</th><th>Status</th><th>Pemberi</th></tr></thead><tbody id="latihan-tbody"></tbody></table></div></div></div>
+      <div class="tab-pane" id="prestasi-komposisi"><div class="card mb-0" style="max-width:500px"><div class="card-header"><div class="card-title">Komposisi Gred Prestasi LNPT 2024</div></div><div class="card-body"><div class="donut-wrap"><svg id="prestasi-donut" width="140" height="140" viewBox="0 0 140 140"></svg><div id="prestasi-legend" class="donut-legend"></div></div></div></div></div>
+    </div>
+    <div class="page" id="page-laporan">
+      <div class="page-header"><div class="page-title">Laporan &amp; Statistik</div><div class="page-subtitle">Jana dan muat turun laporan pengurusan jabatan</div></div>
+      <div class="grid-3">
+        <div class="card"><div class="card-body" style="text-align:center;padding:24px"><div style="font-size:44px;margin-bottom:12px">&#128203;</div><div class="fw-600" style="margin-bottom:6px">Laporan Kehadiran</div><div class="text-sm text-muted" style="margin-bottom:16px">Rekod kehadiran bulanan</div><select class="filter-select" style="width:100%;margin-bottom:10px"><option>Jun 2025</option><option>Mei 2025</option><option>Apr 2025</option></select><button class="btn btn-primary" style="width:100%" onclick="LM.janaPDF('Laporan Kehadiran')">Jana PDF</button></div></div>
+        <div class="card"><div class="card-body" style="text-align:center;padding:24px"><div style="font-size:44px;margin-bottom:12px">&#127796;</div><div class="fw-600" style="margin-bottom:6px">Laporan Cuti</div><div class="text-sm text-muted" style="margin-bottom:16px">Ringkasan permohonan &amp; baki</div><select class="filter-select" style="width:100%;margin-bottom:10px"><option>2025</option><option>2024</option></select><button class="btn btn-primary" style="width:100%" onclick="LM.janaPDF('Laporan Cuti')">Jana PDF</button></div></div>
+        <div class="card"><div class="card-body" style="text-align:center;padding:24px"><div style="font-size:44px;margin-bottom:12px">&#11088;</div><div class="fw-600" style="margin-bottom:6px">Laporan LNPT</div><div class="text-sm text-muted" style="margin-bottom:16px">Ringkasan penilaian prestasi</div><select class="filter-select" style="width:100%;margin-bottom:10px"><option>2024</option><option>2023</option></select><button class="btn btn-primary" style="width:100%" onclick="LM.janaPDF('Laporan LNPT')">Jana PDF</button></div></div>
       </div>
-    </main>
-  </div>
-  <!-- MODAL: Profil Staf -->
-  <div class="modal-overlay" id="modal-staf"><div class="modal modal-md"><div class="modal-header"><div class="modal-title">Profil Staf</div><button class="modal-close" onclick="App.closeModal('modal-staf')">✕</button></div><div class="modal-body" id="modal-staf-body"></div><div class="modal-footer"><button class="btn btn-primary">✏️ Kemaskini</button><button class="btn btn-secondary" onclick="App.closeModal('modal-staf')">Tutup</button></div></div></div>
-  <!-- MODAL: Tambah Staf -->
-  <div class="modal-overlay" id="modal-tambah-staf"><div class="modal modal-lg"><div class="modal-header"><div class="modal-title">➕ Tambah Staf Baru</div><button class="modal-close" onclick="App.closeModal('modal-tambah-staf')">✕</button></div><div class="modal-body"><div class="form-grid"><div class="form-group"><label class="form-label">Nama Penuh *</label><input class="form-input" placeholder="Nama penuh staf"></div><div class="form-group"><label class="form-label">No. Kad Pengenalan *</label><input class="form-input" placeholder="000000-00-0000"></div><div class="form-group"><label class="form-label">Jawatan *</label><input class="form-input" placeholder="Contoh: Jurutera Elektrik"></div><div class="form-group"><label class="form-label">Bahagian *</label><select class="form-select"><option>DET</option><option>DEP</option><option>DTK</option><option>DEG</option><option>DEQ</option><option>Staf Sokongan</option></select></div><div class="form-group"><label class="form-label">Gred *</label><select class="form-select"><option>A44</option><option>A41</option><option>C52</option><option>C48</option><option>C44</option><option>F41</option><option>W44</option><option>J41</option></select></div><div class="form-group"><label class="form-label">No. Telefon</label><input class="form-input" placeholder="011-00000000"></div><div class="form-group"><label class="form-label">E-mel Rasmi *</label><input class="form-input" placeholder="nama@jkeppd.gov.my"></div><div class="form-group"><label class="form-label">Tarikh Lantikan</label><input type="date" class="form-input"></div></div></div><div class="modal-footer"><button class="btn btn-primary" onclick="alert('✅ Rekod staf baru telah disimpan.');App.closeModal('modal-tambah-staf')">💾 Simpan</button><button class="btn btn-secondary" onclick="App.closeModal('modal-tambah-staf')">Batal</button></div></div></div>
-  <!-- MODAL: Notifikasi -->
-  <div class="modal-overlay" id="modal-notif"><div class="modal modal-sm"><div class="modal-header"><div class="modal-title">🔔 Notifikasi</div><button class="modal-close" onclick="App.closeModal('modal-notif')">✕</button></div><div id="notif-list" style="max-height:420px;overflow-y:auto"></div></div></div>`;
+      <div class="grid-2"><div class="card"><div class="card-header"><div class="card-title">Staf Mengikut Gred</div></div><div class="card-body"><div id="gred-chart"></div></div></div><div class="card"><div class="card-header"><div class="card-title">Trend Kehadiran Tahunan</div></div><div class="card-body"><div id="annual-chart"></div></div></div></div>
+      <div class="card"><div class="card-header"><div class="card-title">Staf Mengikut Bahagian</div></div><div class="card-body"><div id="bahagian-chart"></div></div></div>
+      <div class="card mb-0"><div class="card-header"><div class="card-title">Log Laporan Terdahulu</div></div><div class="tbl-wrap"><table><thead><tr><th>No.</th><th>Nama Laporan</th><th>Jenis</th><th>Tarikh</th><th>Oleh</th><th>Saiz</th><th>Tindakan</th></tr></thead><tbody id="log-laporan-tbody"></tbody></table></div></div>
+    </div>
+  </main>
+</div>
+<div class="modal-overlay" id="modal-staf"><div class="modal modal-md"><div class="modal-header"><div class="modal-title">Profil Staf</div><button class="modal-close" onclick="App.closeModal('modal-staf')">X</button></div><div class="modal-body" id="modal-staf-body"></div><div class="modal-footer"><button class="btn btn-primary">Kemaskini</button><button class="btn btn-secondary" onclick="App.closeModal('modal-staf')">Tutup</button></div></div></div>
+<div class="modal-overlay" id="modal-tambah-staf"><div class="modal modal-lg"><div class="modal-header"><div class="modal-title">Tambah Staf Baru</div><button class="modal-close" onclick="App.closeModal('modal-tambah-staf')">X</button></div><div class="modal-body"><div class="form-grid"><div class="form-group"><label class="form-label">Nama Penuh *</label><input class="form-input" placeholder="Nama penuh staf"></div><div class="form-group"><label class="form-label">No. Kad Pengenalan *</label><input class="form-input" placeholder="000000-00-0000"></div><div class="form-group"><label class="form-label">Jawatan *</label><input class="form-input" placeholder="Jawatan"></div><div class="form-group"><label class="form-label">Bahagian *</label><select class="form-select"><option>DET</option><option>DEP</option><option>DTK</option><option>DEG</option><option>DEQ</option><option>Staf Sokongan</option></select></div><div class="form-group"><label class="form-label">Gred *</label><select class="form-select"><option>A44</option><option>A41</option><option>C52</option><option>C48</option><option>C44</option><option>F41</option><option>W44</option><option>J41</option></select></div><div class="form-group"><label class="form-label">No. Telefon</label><input class="form-input" placeholder="011-00000000"></div><div class="form-group"><label class="form-label">E-mel Rasmi *</label><input class="form-input" placeholder="nama@jkeppd.gov.my"></div><div class="form-group"><label class="form-label">Tarikh Lantikan</label><input type="date" class="form-input"></div></div></div><div class="modal-footer"><button class="btn btn-primary" onclick="alert('Rekod staf disimpan.');App.closeModal('modal-tambah-staf')">Simpan</button><button class="btn btn-secondary" onclick="App.closeModal('modal-tambah-staf')">Batal</button></div></div></div>
+<div class="modal-overlay" id="modal-notif"><div class="modal modal-sm"><div class="modal-header"><div class="modal-title">Notifikasi</div><button class="modal-close" onclick="App.closeModal('modal-notif')">X</button></div><div id="notif-list" style="max-height:420px;overflow-y:auto"></div></div></div>`;
 
-  const PAGE_TITLES={overview:'Overview KPI',staf:'Direktori Staf',kehadiran:'Rekod Kehadiran',cuti:'Sistem Cuti',prestasi:'Penilaian Prestasi',laporan:'Laporan & Statistik'};
-  let currentPage='overview';
-  window.App={
-    go(page){
-      if(page===currentPage&&page!=='overview')return;
-      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-      document.getElementById('page-'+page)?.classList.add('active');
-      document.getElementById('nav-'+page)?.classList.add('active');
-      document.getElementById('topbar-title').textContent=PAGE_TITLES[page]||page;
-      currentPage=page;
-    },
-    openModal(id){document.getElementById(id)?.classList.add('open');},
-    closeModal(id){document.getElementById(id)?.classList.remove('open');},
-    switchTab(group,tab,el){
-      const parent=document.getElementById('page-'+group); if(!parent)return;
-      parent.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-      parent.querySelectorAll('.tab-pane').forEach(tp=>tp.classList.remove('active'));
-      el.classList.add('active');
-      document.getElementById(group+'-'+tab)?.classList.add('active');
-    }
-  };
-  document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('open');});
+const PT={overview:'Overview KPI',staf:'Direktori Staf',kehadiran:'Rekod Kehadiran',cuti:'Sistem Cuti',prestasi:'Penilaian Prestasi',laporan:'Laporan & Statistik'};
+let cur='overview';
+window.App={
+  go(p){if(p===cur&&p!=='overview')return;document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));document.getElementById('page-'+p)?.classList.add('active');document.getElementById('nav-'+p)?.classList.add('active');document.getElementById('topbar-title').textContent=PT[p]||p;cur=p;},
+  openModal(id){document.getElementById(id)?.classList.add('open');},
+  closeModal(id){document.getElementById(id)?.classList.remove('open');},
+  switchTab(g,t,el){const pr=document.getElementById('page-'+g);if(!pr)return;pr.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));pr.querySelectorAll('.tab-pane').forEach(x=>x.classList.remove('active'));el.classList.add('active');document.getElementById(g+'-'+t)?.classList.add('active');}
+};
+document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('open');});
 
-  function setDate(){
-    const now=new Date(), hari=['Ahad','Isnin','Selasa','Rabu','Khamis','Jumaat','Sabtu'], bln=['Jan','Feb','Mac','Apr','Mei','Jun','Jul','Ogos','Sep','Okt','Nov','Dis'];
-    document.getElementById('topbar-date').textContent=`${hari[now.getDay()]}, ${now.getDate()} ${bln[now.getMonth()]} ${now.getFullYear()}`;
-    const lu=document.getElementById('last-update'); if(lu)lu.textContent=now.toLocaleTimeString('ms-MY',{hour:'2-digit',minute:'2-digit'});
-  }
-
-  function initOverview(){
-    const bulanLabel=['Jan','Feb','Mac','Apr','Mei','Jun','Jul','Ogos','Sep','Okt','Nov','Dis'];
-    const kehadiranData=[88,90,87,92,91,93,89,94,91,90,88,91];
-    renderBarChart('ov-kehadiran-chart',bulanLabel.map((b,i)=>({label:b,value:kehadiranData[i],color:kehadiranData[i]>=90?'var(--success)':kehadiranData[i]>=85?'var(--accent)':'var(--warning)'})),100);
-    renderDonut('ov-donut','ov-donut-legend',[{label:'DET',value:14,color:'#0f62fe'},{label:'DEP',value:28,color:'#24a148'},{label:'DTK',value:16,color:'#8a3ffc'},{label:'DEG',value:11,color:'#f1c21b'},{label:'DEQ',value:20,color:'#da1e28'},{label:'Staf Sokongan',value:8,color:'#009d9a'}]);
-    renderBarChart('ov-prestasi-chart',BAHAGIAN.map((b,i)=>({label:b,value:sri(i*17+5,78,95),color:'var(--accent)'})),100);
-    const activities=[{dot:'var(--accent)',text:'Nordin bin Talib mengemukakan permohonan cuti tahunan 3 hari',time:'10 minit lalu'},{dot:'var(--success)',text:'Cuti Ahmad bin Abdullah telah diluluskan oleh pengarah',time:'32 minit lalu'},{dot:'var(--purple)',text:'Staf baru Siti binti Hassan telah didaftarkan ke sistem',time:'1 jam lalu'},{dot:'var(--teal)',text:'Laporan LNPT April 2025 telah dijana dan disimpan',time:'2 jam lalu'},{dot:'var(--danger)',text:'Mohd bin Yusof belum daftar masuk — status AWOL',time:'3 jam lalu'},{dot:'var(--warning)',text:'15 staf telah mendaftar untuk Kursus AutoCAD Lanjutan',time:'Semalam'}];
-    document.getElementById('ov-activity').innerHTML=activities.map(a=>`<div class="activity-item"><div class="activity-dot" style="background:${a.dot}"></div><div><div class="activity-text">${a.text}</div><div class="activity-time">${a.time}</div></div></div>`).join('');
-    document.getElementById('kpi-cemerlang').textContent=STAF.filter(s=>s.skor_lnpt>=90).length;
-    document.getElementById('kpi-baik').textContent=STAF.filter(s=>s.skor_lnpt>=80&&s.skor_lnpt<90).length;
-    document.getElementById('kpi-memuaskan').textContent=STAF.filter(s=>s.skor_lnpt>=70&&s.skor_lnpt<80).length;
-    document.getElementById('kpi-lemah').textContent=STAF.filter(s=>s.skor_lnpt<70).length;
-  }
-
-  function initNotif(){
-    document.getElementById('notif-list').innerHTML=NOTIFIKASI.map(n=>`<div class="notif-item ${n.unread?'unread':''}"><div class="notif-icon-wrap" style="background:${n.bg}">${n.icon}</div><div class="notif-body"><div class="notif-title">${n.title}</div><div class="notif-desc">${n.desc}</div></div><div class="notif-time">${n.time}</div></div>`).join('');
-  }
-
-  function init(){
-    document.getElementById('app').innerHTML=LAYOUT_HTML;
-    setDate(); initOverview(); initNotif();
-    StafModule.init(); KehadiranModule.init(); CutiModule.init(); PrestasiModule.init(); LaporanModule.init();
-  }
-
-  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+function init(){
+  document.getElementById('app').innerHTML=HTML;
+  const now=new Date(),hr=['Ahad','Isnin','Selasa','Rabu','Khamis','Jumaat','Sabtu'],bl=['Jan','Feb','Mac','Apr','Mei','Jun','Jul','Ogos','Sep','Okt','Nov','Dis'];
+  const td=document.getElementById('topbar-date');if(td)td.textContent=hr[now.getDay()]+', '+now.getDate()+' '+bl[now.getMonth()]+' '+now.getFullYear();
+  const lu=document.getElementById('last-update');if(lu)lu.textContent=now.toLocaleTimeString('ms-MY',{hour:'2-digit',minute:'2-digit'});
+  rBC('ov-kehadiran-chart',['Jan','Feb','Mac','Apr','Mei','Jun','Jul','Ogos','Sep','Okt','Nov','Dis'].map((b,i)=>{const v=[88,90,87,92,91,93,89,94,91,90,88,91][i];return{label:b,value:v,color:v>=90?'var(--success)':v>=85?'var(--accent)':'var(--warning)'};}),100);
+  rDN('ov-donut','ov-donut-legend',[{label:'DET',value:14,color:'#0f62fe'},{label:'DEP',value:28,color:'#24a148'},{label:'DTK',value:16,color:'#8a3ffc'},{label:'DEG',value:11,color:'#f1c21b'},{label:'DEQ',value:20,color:'#da1e28'},{label:'Staf Sokongan',value:8,color:'#009d9a'}]);
+  rBC('ov-prestasi-chart',BAHAGIAN.map((b,i)=>({label:b,value:sri(i*17+5,78,95),color:'var(--accent)'})),100);
+  document.getElementById('ov-activity').innerHTML=[{d:'var(--accent)',t:'Nordin bin Talib mengemukakan permohonan cuti 3 hari',tm:'10 minit lalu'},{d:'var(--success)',t:'Cuti Ahmad bin Abdullah telah diluluskan',tm:'32 minit lalu'},{d:'var(--purple)',t:'Staf baru Siti binti Hassan telah didaftarkan',tm:'1 jam lalu'},{d:'var(--teal)',t:'Laporan LNPT April 2025 telah dijana',tm:'2 jam lalu'},{d:'var(--danger)',t:'Mohd bin Yusof belum daftar masuk - AWOL',tm:'3 jam lalu'}].map(a=>`<div class="activity-item"><div class="activity-dot" style="background:${a.d}"></div><div><div class="activity-text">${a.t}</div><div class="activity-time">${a.tm}</div></div></div>`).join('');
+  document.getElementById('notif-list').innerHTML=NOTIF.map(n=>`<div class="notif-item ${n.unread?'unread':''}"><div class="notif-icon-wrap" style="background:${n.bg}">${n.icon}</div><div class="notif-body"><div class="notif-title">${n.title}</div><div class="notif-desc">${n.desc}</div></div><div class="notif-time">${n.time}</div></div>`).join('');
+  SM.init();KM.init();CM.init();PM.init();LM.init();
+}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
 })();
 </script>
 </body>
